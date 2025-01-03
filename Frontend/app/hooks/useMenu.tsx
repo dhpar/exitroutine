@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useTime } from "./useTime";
 
 type JSONPrimitive = string | number | boolean | null;
