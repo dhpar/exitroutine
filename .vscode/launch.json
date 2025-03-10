@@ -1,77 +1,46 @@
 {
     "configurations": [
         {
-            "type": "node",
-            "request": "launch",
-            "name": "Launch Program",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run",
-                "dev"
-            ],
-            "cwd": "${workspaceFolder}/Frontend/"
-        },
-        {
             "name": "Next.js: debug server-side",
             "type": "node-terminal",
             "request": "launch",
-            "command": "npm run dev",
-            "localRoot": "${workspaceFolder}/Frontend/"
+            "command": "cd ${workspaceFolder}/Frontend/ && npm run dev",
+            "localRoot": "${workspaceFolder}/Frontend/",
+            "resolveSourceMapLocations" : [
+                "${workspaceFolder}/Frontend/.next",
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
+            "env": {
+                "NODE_OPTIONS": "--inspect=9230"
+            },
         },
         {
             "name": "Next.js: debug client-side",
             "type": "chrome",
             "request": "launch",
-            "url": "http://localhost:3000",
-            "cwd": "${workspaceFolder}/Frontend/"
+            "url": "https://localhost:3000",
+            "cwd": "${workspaceFolder}/Frontend/",
+            "serverReadyAction":{
+                "action": "startDebugging",
+                "config": {
+                    "type": "node",
+                    "request": "launch"
+                },
+                "killOnServerStop": false
+            }  
         },
+      
+    ],
+    
+    "compounds": [
         {
-            "name": "Next.js: debug client-side (Firefox)",
-            "type": "firefox",
-            "request": "launch",
-            "url": "http://localhost:3000",
-            "reAttach": true,
-            "pathMappings": [
-                {
-                    "url": "webpack-internal:///home/david/coding/exitroutine",
-                    "path": "${workspaceFolder}"
-                },
-                {
-                    "url": "webpack-internal:///home/david/coding/exitroutine",
-                    "path": "${workspaceFolder}"
-                },
-                {
-                    "url": "webpack-internal:///home/david/coding/exitroutine",
-                    "path": "${workspaceFolder}"
-                },
-                {
-                    "url": "webpack://.",
-                    "path": "${workspaceFolder}/Frontend"
-                },
-                {
-                    "url": "webpack://_N_E",
-                    "path": "${workspaceFolder}/Frontend/"
-                }
-            ]
-        },
-        {
-            "name": "Next.js: debug full stack",
-            "type": "node",
-            "request": "launch",
-            "program": "${workspaceFolder}/Frontend/node_modules/.bin/next",
-            "runtimeArgs": [
-                "--inspect"
+            "name": "- Full stack",
+            "configurations": [
+                "Next.js: debug server-side", 
+                "Next.js: debug client-side"
             ],
-            "skipFiles": [
-                "/Frontend/<node_internals>/**"
-            ],
-            "serverReadyAction": {
-                "action": "debugWithChrome",
-                "killOnServerStop": true,
-                "pattern": "- Local:.+(https?://.+)",
-                "uriFormat": "%s",
-                "webRoot": "${workspaceFolder}"
-            }
+            "stopAll": true
         }
     ]
 }

@@ -21,7 +21,14 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-
+  
+  // webpack: (config, {isServer, dev}) => {
+  //   if (!dev) {
+  //     config.devtool = isServer ? false : 'eval-source-map'
+  //   }
+  //   config.server
+  //   return config
+  // },
   
 };
 
