@@ -1,6 +1,6 @@
 import { useWhatItems } from '@/hooks/useWhatItems';
 import * as React from 'react';
-import { Card } from '../Card';
+import { Card } from '../Card/Card';
 import { useTime } from '@/hooks/useTime';
 
 export const BackpackItems: React.FunctionComponent<{}> = () => {
