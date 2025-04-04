@@ -1,9 +1,8 @@
-"use client";
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { useTime } from "../../hooks/useTime";
 import { fetchMenuItems } from "@/actions/getSchoolMenu";
 import { use } from "react";
-import { Card } from "../Card";
+import { Card } from "../Card/Card";
 
 export const SchoolMenu = () => {
     const { today } = useTime();

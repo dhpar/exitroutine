@@ -22,13 +22,14 @@ const nextConfig: NextConfig = {
     ];
   },
   
-  // webpack: (config, {isServer, dev}) => {
-  //   if (!dev) {
-  //     config.devtool = isServer ? false : 'eval-source-map'
-  //   }
-  //   config.server
-  //   return config
-  // },
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.svg$/i,
+      issuer: /\.[jt]sx?$/,
+      use: ["@svgr/webpack"],
+    });
+    return config;
+  },
   
 };
 

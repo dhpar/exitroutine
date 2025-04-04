@@ -27,10 +27,20 @@
                     "type": "node",
                     "request": "launch"
                 },
-                "killOnServerStop": false
             }  
         },
-      
+        {
+            "name": "Run tests",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "cd ${workspaceFolder}/Frontend/ && npm run test",
+            "localRoot": "${workspaceFolder}/Frontend/",
+            "resolveSourceMapLocations" : [
+                "${workspaceFolder}/Frontend/.next",
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
+        }
     ],
     
     "compounds": [
