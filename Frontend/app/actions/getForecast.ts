@@ -1,43 +1,60 @@
+"use server"
+import { forecastIcons } from '@/components/Forecast/ForecastIcons';
+import { Temporal } from '@js-temporal/polyfill';
 import { fetchWeatherApi } from 'openmeteo';
+import { JSX } from 'react';
 
-export const getWeather = async () => {
-  const responses = await fetchWeatherApi(
-    "https://api.open-meteo.com/v1/forecast", {
-      "latitude": 44.9247,
-      "longitude": -93.3344,
-      "hourly": ["temperature_2m", "apparent_temperature", "precipitation"],
-      "daily": ["apparent_temperature_max", "apparent_temperature_min"],
-      "temperature_unit": "fahrenheit",
-      "wind_speed_unit": "mph",
-      "precipitation_unit": "inch",
-      "forecast_hours": 24,
-      "models": "gfs_seamless"
+interface IPosition {
+  lat: number;
+  lon: number;
+}
+
+interface IWeatherIcon {
+  code: number;
+  label: string;
+  color: string;
+  Icon: JSX.Element;
+}
+
+export interface IWeatherResponse {
+  WeatherIcon: IWeatherIcon,
+  maxTemp: string,
+  minTemp: string,
+  precipitation: string
+}
+
+export const getWeather = async (position: IPosition, 
+  endDate: string): Promise<IWeatherResponse> => {
+    'use server'
+    const responses = await fetchWeatherApi(
+    "https://api.open-meteo.com/v1/forecast", 
+    {
+        "latitude": position.lat,
+        "longitude": position.lon,
+        "temperature_unit": "fahrenheit",
+        "daily": [
+            "weather_code", 
+            "apparent_temperature_max", 
+            "apparent_temperature_min", 
+            "precipitation_probability_max"
+        ],
+        "start_date": Temporal.Now.plainDateISO(),
+        "end_date": endDate,   
     }
   );
+  
   // Helper function to form time ranges
-  const range = (start: number, stop: number, step: number) =>
-    Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
   const response = responses[0];
-  const utcOffsetSeconds = response.utcOffsetSeconds();
-  const hourly = response.hourly()!;
   const daily = response.daily()!;
+  const getVariable = (index: number) => 
+      daily.variables(index)!.valuesArray()![0];
+  const WeatherIcon = forecastIcons(getVariable(0));
 
   return {
-    hourly: {
-      time: range(Number(hourly.time()), Number(hourly.timeEnd()), hourly.interval()).map(
-        (t) => new Date((t + utcOffsetSeconds) * 1000)
-      ),
-      temperature2m: hourly.variables(0)!.valuesArray()!,
-      apparentTemperature: hourly.variables(1)!.valuesArray()!,
-      precipitation: hourly.variables(2)!.valuesArray()!,
-    },
-    daily: {
-      time: range(Number(daily.time()), Number(daily.timeEnd()), daily.interval()).map(
-        (t) => new Date((t + utcOffsetSeconds) * 1000)
-      ),
-      apparentTemperatureMax: daily.variables(0)!.valuesArray()!,
-      apparentTemperatureMin: daily.variables(1)!.valuesArray()!,
-    },
+    WeatherIcon,
+    maxTemp: getVariable(1).toFixed(0),
+    minTemp: getVariable(2).toFixed(0),
+    precipitation: getVariable(3).toFixed(0)
   }
 }
 

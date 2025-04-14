@@ -21,6 +21,13 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  logging: {
+    fetches: {
+      fullUrl: true,
+      hmrRefreshes: true
+    },
+  },
+
   
   webpack(config) {
     config.module.rules.push({
