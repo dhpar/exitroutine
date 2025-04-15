@@ -13,25 +13,17 @@ export default function Home() {
   
   const decreaseDate = () => dispatch({type: 'decrement'});
   const increaseDate = () => dispatch({type: 'increment'});
-  
-  // if(!state) {
-  //   console.log(state);
-  //   return <>
-  //     <h1>Error!</h1>
-  //     <p>There was an error retrieving the date info (check the console).</p>
-  //   </>
-  // }
-
+console.log(state.date.toPlainDate().toString());
   return (
     <main className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <h1 className="text-4xl" data-testid="page-heading-level-1">
-        <button onChange={decreaseDate}>↓</button>Next school day is <span className="text-8xl text-cyan-500">{ state.date.dayOfWeek }</span>
+        <button onChange={decreaseDate}>↓</button>Next school day is <span className="text-8xl text-cyan-500">{ toWeekDayName(state.date.dayOfWeek) }</span>
         <button onChange={increaseDate}>↑</button>
       </h1>
       <ul className="grid gap-4 grid-cols-3">
         <li>
         <Suspense fallback={<CardLoading />}>
-          <Forecast day = { state.date.toString() } />
+          <Forecast date = {state.date.toPlainDate().toString()} />
         </Suspense>
         </li>
         <li>

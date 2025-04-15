@@ -1,5 +1,3 @@
-import { QueryClient, useQuery } from "@tanstack/react-query";
-import { useTime } from "../../hooks/useTime";
 import { fetchMenuItems } from "@/actions/getSchoolMenu";
 import { FunctionComponent, use, useEffect, useState } from "react";
 import { Card } from "../Card/Card";
@@ -16,9 +14,10 @@ export const SchoolMenu:FunctionComponent<ISchoolMenu> = ({yyyy, mm, dd}) => {
     const [menu, setMenu] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
-        fetchMenuItems(yyyy, mm, dd).then(resp => {
-            setMenu(resp);
-        }).finally(() => setIsLoading(false));
+        fetchMenuItems(yyyy, mm, dd)
+            .then(setMenu)
+            .finally(() => setIsLoading(false))
+            .catch(console.assert);
     }, []);
     
     if(isLoading) return <CardLoading />

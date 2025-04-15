@@ -3,26 +3,25 @@ import { Card } from "../Card/Card";
 import { useLocation } from "@/hooks/useLocation";
 import { CardLoading } from "../Card/CardLoadng";
 import { getWeather, IWeatherResponse } from "@/actions/getForecast";
+import { Temporal } from "@js-temporal/polyfill";
 
-export const Forecast:FunctionComponent<{day: string}> = ({day}) => {
+export const Forecast:FunctionComponent<{date:string}> = ({date}) => {
     const position = useLocation();
     const [ forecast, setForecast ] = useState<IWeatherResponse | null>(null);
     const hasPosition = 
         !!position.lat && !!position.lon && 
         typeof position.lat === 'number' && typeof position.lon === 'number' &&
         position.lat !== 0 && position.lon !== 0;
-  
+
     useEffect(() => {
         if(!hasPosition){
             return;
         }
-        getWeather({lat: position.lat, lon: position.lon}, day).then(setForecast);
+        getWeather({lat: position.lat, lon: position.lon}, date).then(setForecast);
     
     }, [hasPosition]);
     
-    if(!forecast) {
-        return <CardLoading />
-    }
+    if(!forecast)  return <CardLoading />
     
     return (
         <Card title="Forecast">

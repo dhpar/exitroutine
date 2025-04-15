@@ -23,14 +23,13 @@ export interface IWeatherResponse {
   precipitation: string
 }
 
-export const getWeather = async (position: IPosition, 
-  endDate: string): Promise<IWeatherResponse> => {
-    'use server'
-    const responses = await fetchWeatherApi(
+// For endDate needs a date with the following format: yyyy-mm-dd, with leading zeros (2025-02-02)
+export const getWeather = async ({lat, lon}: IPosition, endDate: string): Promise<IWeatherResponse> => {
+  const responses = await fetchWeatherApi(
     "https://api.open-meteo.com/v1/forecast", 
     {
-        "latitude": position.lat,
-        "longitude": position.lon,
+        "latitude": lat,
+        "longitude": lon,
         "temperature_unit": "fahrenheit",
         "daily": [
             "weather_code", 
@@ -43,15 +42,12 @@ export const getWeather = async (position: IPosition,
     }
   );
   
-  // Helper function to form time ranges
-  const response = responses[0];
-  const daily = response.daily()!;
-  const getVariable = (index: number) => 
-      daily.variables(index)!.valuesArray()![0];
-  const WeatherIcon = forecastIcons(getVariable(0));
-
+  // Helper function to form time ranges, the index follows the order in which the different parameters where requested.
+  // ie: for ```"daily": ["weather_code", "apparent_temperature_max"]```, we need to use the index = 0 for the weather code.
+  const getVariable = (index: number) => responses[0].daily()!.variables(index)!.valuesArray()![0];
+  
   return {
-    WeatherIcon,
+    WeatherIcon: forecastIcons(getVariable(0)),
     maxTemp: getVariable(1).toFixed(0),
     minTemp: getVariable(2).toFixed(0),
     precipitation: getVariable(3).toFixed(0)

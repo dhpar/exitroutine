@@ -24,7 +24,6 @@ export default function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  console.log(children?.toString());
   return (
     // Provide the client to your App
     <html lang="en">

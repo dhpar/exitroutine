@@ -1,5 +1,4 @@
-import { IItem } from '@/actions/getSchoolMenu.types';
-import { inspect, styleText } from 'node:util';
+import { styleText } from 'node:util';
 
 export const logHeaders = (response: Response) => {
     console.group(styleText(['blue'], 'response:'));
