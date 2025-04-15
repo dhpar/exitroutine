@@ -1,25 +1,29 @@
-import { useTime } from "./hooks/useTime";
+"use client"
+import { Suspense } from "react";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import { toWeekDayName } from "./utils/Scheduler";
 import { Forecast } from "./components/Forecast/Forecast";
 import { BackpackItems } from "./components/BackpackItems/BackpackItems";
 import { SchoolMenu } from "./components/SchoolMenu/SchoolMenu";
-import { Suspense } from "react";
 import { CardLoading } from "./components/Card/CardLoadng";
+import { useDates } from "./providers";
 
 export default function Home() {
-  const { today } = useTime();
-  const isTodayWeekend = today === 'Saturday' || today === 'Sunday';
-  const showDay = isTodayWeekend? 'Monday' : today;
-
+  const {state, dispatch} = useDates();
+  
+  const decreaseDate = () => dispatch({type: 'decrement'});
+  const increaseDate = () => dispatch({type: 'increment'});
+console.log(state.date.toPlainDate().toString());
   return (
     <main className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <h1 className="text-4xl" data-testid="page-heading-level-1">
-        Next school day is <span className="text-8xl text-cyan-500">{ showDay }</span>
+        <button onChange={decreaseDate}>↓</button>Next school day is <span className="text-8xl text-cyan-500">{ toWeekDayName(state.date.dayOfWeek) }</span>
+        <button onChange={increaseDate}>↑</button>
       </h1>
       <ul className="grid gap-4 grid-cols-3">
         <li>
         <Suspense fallback={<CardLoading />}>
-          <Forecast />
+          <Forecast date = {state.date.toPlainDate().toString()} />
         </Suspense>
         </li>
         <li>
@@ -27,7 +31,11 @@ export default function Home() {
         </li>
         <li>
           <HydrationBoundary state={dehydrate(new QueryClient)}>
-            <SchoolMenu />
+            <SchoolMenu 
+              dd = {state.date.day.toString()} 
+              mm = {state.date.month.toString()} 
+              yyyy = {state.date.year.toString()}
+            />
           </HydrationBoundary>
         </li>
       </ul> 

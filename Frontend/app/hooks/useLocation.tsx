@@ -40,22 +40,24 @@ export const useLocation = () => {
     });
 
     useEffect(() => {
-        debugger;
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                ({coords}: GeolocationPosition) => {
-                    console.log({coords});
-                    setPosition({ 
-                        lat: coords.latitude, 
-                        lon: coords.longitude
-                    });
-                }, 
-                error, 
-                options
-            );
+        const hasGeolocation = "geolocation" in navigator;
+        
+        if (!hasGeolocation) {
+            return;
         }
+        
+        navigator.geolocation.getCurrentPosition(
+            ({coords}: GeolocationPosition) => {
+                console.log({coords});
+                setPosition({ 
+                    lat: coords.latitude, 
+                    lon: coords.longitude
+                });
+            }, 
+            error, 
+            options
+        );
     }, []);
-// debugger;
 
     return position;
 }

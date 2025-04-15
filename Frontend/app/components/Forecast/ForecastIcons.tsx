@@ -203,5 +203,10 @@ export const forecastIcons = (code: number) => {
 
     ].find(
         weatherCodeItem => weatherCodeItem.code === code
-    );
+    ) || {
+        code: 0,
+        label: 'Clear',
+        color: 'slate-300',
+        Icon: <Sun {...iconProps} />
+    };
 };

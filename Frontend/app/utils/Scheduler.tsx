@@ -1,8 +1,9 @@
 import { Temporal } from '@js-temporal/polyfill';
 
-const getToday = ():Temporal.PlainDateTime => Temporal.Now.plainDateTimeISO();
+const getToday = Temporal.Now.plainDateTimeISO();
+const getTime = Temporal.Now.plainTimeISO();
 const getDate = () => {
-    const { day, month, year, hour, minute, dayOfWeek } = getToday();
+    const { day, month, year, hour, minute, dayOfWeek } = getToday;
     
     return {
         day, 
@@ -15,15 +16,30 @@ const getDate = () => {
 };
 
 const toWeekDayName = (day: number, shortFormat = false) => {
-    const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    const shortWeekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const shortWeekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     return shortFormat? shortWeekDays[day] : weekDays[day];
 }
 
-const getNextMonday = (date: Temporal.PlainDate) => date.add({days: 7 % date.dayOfWeek});
-const getNextDay = (date: Temporal.PlainDate) => date.add({days: 1});
-const getPrevDay = (date: Temporal.PlainDate) => date.subtract({days: 1});
-const isWeekend = (day: number) => day === 6 || day === 7;
+const getNextDay = (date: Temporal.PlainDateTime):Temporal.PlainDateTime => date.add({days: 1});
+const getPrevDay = (date: Temporal.PlainDateTime):Temporal.PlainDateTime => date.subtract({days: 1});
 
-export { getToday, getDate, getNextMonday, getNextDay, getPrevDay, isWeekend, toWeekDayName };
+// Provide a day, and if is still this function should return next school day
+const getNextSchoolDay = (date: Temporal.PlainDateTime) => {
+
+   
+    const isAfterMorningBus = date.hour > 8;
+    const isWeekEnd = 
+        (date.dayOfWeek === 4 && isAfterMorningBus) || 
+        date.dayOfWeek === 5 || 
+        date.dayOfWeek === 6;
+
+    if(isWeekEnd) {
+        return date.add({days: date.daysInWeek - date.dayOfWeek});
+    } 
+
+    return isAfterMorningBus? date.add({days: 1}) : date;
+}
+
+export { getToday, getTime, getDate, getNextSchoolDay, getNextDay, getPrevDay, toWeekDayName };

@@ -1,43 +1,56 @@
+"use server"
+import { forecastIcons } from '@/components/Forecast/ForecastIcons';
+import { Temporal } from '@js-temporal/polyfill';
 import { fetchWeatherApi } from 'openmeteo';
+import { JSX } from 'react';
 
-export const getWeather = async () => {
+interface IPosition {
+  lat: number;
+  lon: number;
+}
+
+interface IWeatherIcon {
+  code: number;
+  label: string;
+  color: string;
+  Icon: JSX.Element;
+}
+
+export interface IWeatherResponse {
+  WeatherIcon: IWeatherIcon,
+  maxTemp: string,
+  minTemp: string,
+  precipitation: string
+}
+
+// For endDate needs a date with the following format: yyyy-mm-dd, with leading zeros (2025-02-02)
+export const getWeather = async ({lat, lon}: IPosition, endDate: string): Promise<IWeatherResponse> => {
   const responses = await fetchWeatherApi(
-    "https://api.open-meteo.com/v1/forecast", {
-      "latitude": 44.9247,
-      "longitude": -93.3344,
-      "hourly": ["temperature_2m", "apparent_temperature", "precipitation"],
-      "daily": ["apparent_temperature_max", "apparent_temperature_min"],
-      "temperature_unit": "fahrenheit",
-      "wind_speed_unit": "mph",
-      "precipitation_unit": "inch",
-      "forecast_hours": 24,
-      "models": "gfs_seamless"
+    "https://api.open-meteo.com/v1/forecast", 
+    {
+        "latitude": lat,
+        "longitude": lon,
+        "temperature_unit": "fahrenheit",
+        "daily": [
+            "weather_code", 
+            "apparent_temperature_max", 
+            "apparent_temperature_min", 
+            "precipitation_probability_max"
+        ],
+        "start_date": Temporal.Now.plainDateISO(),
+        "end_date": endDate,   
     }
   );
-  // Helper function to form time ranges
-  const range = (start: number, stop: number, step: number) =>
-    Array.from({ length: (stop - start) / step }, (_, i) => start + i * step);
-  const response = responses[0];
-  const utcOffsetSeconds = response.utcOffsetSeconds();
-  const hourly = response.hourly()!;
-  const daily = response.daily()!;
-
+  
+  // Helper function to form time ranges, the index follows the order in which the different parameters where requested.
+  // ie: for ```"daily": ["weather_code", "apparent_temperature_max"]```, we need to use the index = 0 for the weather code.
+  const getVariable = (index: number) => responses[0].daily()!.variables(index)!.valuesArray()![0];
+  
   return {
-    hourly: {
-      time: range(Number(hourly.time()), Number(hourly.timeEnd()), hourly.interval()).map(
-        (t) => new Date((t + utcOffsetSeconds) * 1000)
-      ),
-      temperature2m: hourly.variables(0)!.valuesArray()!,
-      apparentTemperature: hourly.variables(1)!.valuesArray()!,
-      precipitation: hourly.variables(2)!.valuesArray()!,
-    },
-    daily: {
-      time: range(Number(daily.time()), Number(daily.timeEnd()), daily.interval()).map(
-        (t) => new Date((t + utcOffsetSeconds) * 1000)
-      ),
-      apparentTemperatureMax: daily.variables(0)!.valuesArray()!,
-      apparentTemperatureMin: daily.variables(1)!.valuesArray()!,
-    },
+    WeatherIcon: forecastIcons(getVariable(0)),
+    maxTemp: getVariable(1).toFixed(0),
+    minTemp: getVariable(2).toFixed(0),
+    precipitation: getVariable(3).toFixed(0)
   }
 }
 
