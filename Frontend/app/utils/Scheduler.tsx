@@ -16,7 +16,6 @@ const getDate = () => {
 };
 
 const toWeekDayName = (date: Temporal.PlainDateTime, format: "long" | "short" | "narrow" | undefined = 'long') => date.toLocaleString("en-US", { weekday: format });
-
 const getNextDay = (date: Temporal.PlainDateTime):Temporal.PlainDateTime => getNextSchoolDay(date.add({days: 1}));
 
 const getPrevDay = (date: Temporal.PlainDateTime):Temporal.PlainDateTime => {
