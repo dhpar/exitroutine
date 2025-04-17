@@ -1,5 +1,5 @@
 import { Temporal } from "@js-temporal/polyfill";
-import { getNextSchoolDay, getToday, getNextDay, getPrevDay } from "./utils/Scheduler";
+import { getToday, getNextDay, getPrevDay, getDatesObj } from "./utils/Scheduler";
 
 export const dataReducerStateActions = {
     INCREMENT: 'increment',
@@ -9,6 +9,9 @@ export const dataReducerStateActions = {
 
 export interface IDateState {
     date: Temporal.PlainDateTime;
+    dd: string;
+    mm: string;
+    yyyy: string;
 }
 
 export interface IDateAction {
@@ -20,21 +23,16 @@ export interface IDateReducer {
     action?: IDateAction;
 };
 
-export const initialState:IDateState = { 
-    date: getNextSchoolDay(getToday)
-};
-
+export const initialState:IDateState = getDatesObj(getToday);
 export const dateReducer = (state:IDateState, action:IDateAction):IDateState => {
     switch (action.type) {
         case 'increment':
-            return { date: getNextDay(state.date) };
+            return getDatesObj(getNextDay(state.date));
         case 'decrement':
-            return { date: getPrevDay(state.date) };
+            return getDatesObj(getPrevDay(state.date));
         case 'currentDate':
-            return { date: getNextSchoolDay(getToday) };
-        default: {
+            return initialState;
+        default: 
             throw new Error(`Unhandled action type: ${action.type}`);
-        }
     }
 };
-  

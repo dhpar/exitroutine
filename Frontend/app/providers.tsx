@@ -28,8 +28,8 @@ export default function Providers({ children }: PropsWithChildren):ReactNode | P
 
   return <QueryClientProvider client={queryClient}>
     <DatesStateContext value={{state, dispatch}}>
-        {children}
-        <ReactQueryDevtools />
+      {children}
+      <ReactQueryDevtools />
     </DatesStateContext>
   </QueryClientProvider>
 };
