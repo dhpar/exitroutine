@@ -3,11 +3,17 @@ import { Card } from "../Card/Card";
 import { useLocation } from "@/hooks/useLocation";
 import { CardLoading } from "../Card/CardLoadng";
 import { getWeather, IWeatherResponse } from "@/actions/getForecast";
-import { Temporal } from "@js-temporal/polyfill";
+import { useDates } from "@/providers";
+import { ApiError } from "next/dist/server/api-utils";
+import { CardError } from "../Card/CardError";
 
-export const Forecast:FunctionComponent<{date:string}> = ({date}) => {
+export const Forecast:FunctionComponent<{}> = () => {
+    const { state: { date, dd,mm, yyyy} } = useDates();
+
     const position = useLocation();
     const [ forecast, setForecast ] = useState<IWeatherResponse | null>(null);
+    const [ isLoading, setLoading ] = useState(true);
+    const [ error, setError ] = useState<ApiError>();
     const hasPosition = 
         !!position.lat && !!position.lon && 
         typeof position.lat === 'number' && typeof position.lon === 'number' &&
@@ -17,12 +23,21 @@ export const Forecast:FunctionComponent<{date:string}> = ({date}) => {
         if(!hasPosition){
             return;
         }
-        getWeather({lat: position.lat, lon: position.lon}, date).then(setForecast);
+        getWeather({
+            lat: position.lat, 
+            lon: position.lon
+        }, `${yyyy}-${mm}-${dd}`)
+            .then(resp => {
+                setLoading(true);
+                setForecast(resp);
+            })
+            .catch(setError)
+            .finally(() => setLoading(false));
+    }, [hasPosition, date]);
     
-    }, [hasPosition]);
-    
-    if(!forecast)  return <CardLoading />
-    
+    if(isLoading)  return <CardLoading />
+    if(error?.statusCode && error?.statusCode !== 200) return <CardError {...error} />
+
     return (
         <Card title="Forecast">
             <ul data-testid="forecast" className="grid grid-cols-2 gap-4">

@@ -37,9 +37,9 @@ export const getWeather = async ({lat, lon}: IPosition, endDate: string): Promis
             "apparent_temperature_min", 
             "precipitation_probability_max"
         ],
-        "start_date": Temporal.Now.plainDateISO(),
-        "end_date": endDate,   
-    }
+        "start_date": Temporal.PlainDate.from(endDate),
+        "end_date": Temporal.PlainDate.from(endDate).add({days: 1}),   
+    }, 
   );
   
   // Helper function to form time ranges, the index follows the order in which the different parameters where requested.

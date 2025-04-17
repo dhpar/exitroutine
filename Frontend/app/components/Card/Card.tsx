@@ -15,8 +15,9 @@ export const Card = ({ title, unit, cardText, ...props }: CardProps) => (
       {title}
     </h2>
     {cardText && 
-      <p className="text-cyan-500 text-2xl">{cardText} {unit?<span className="text-base">{unit}</span> : ''}</p>
-    }
+      <p className="text-cyan-500 text-2xl">
+        {cardText} {unit?<span className="text-base">{unit}</span> : ''}
+      </p>}
     { props.children }
   </div>
 );

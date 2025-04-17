@@ -15,31 +15,34 @@ const getDate = () => {
     };
 };
 
-const toWeekDayName = (day: number, shortFormat = false) => {
-    const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const shortWeekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const toWeekDayName = (date: Temporal.PlainDateTime, format: "long" | "short" | "narrow" | undefined = 'long') => date.toLocaleString("en-US", { weekday: format });
+const getNextDay = (date: Temporal.PlainDateTime):Temporal.PlainDateTime => getNextSchoolDay(date.add({days: 1}));
 
-    return shortFormat? shortWeekDays[day] : weekDays[day];
+const getPrevDay = (date: Temporal.PlainDateTime):Temporal.PlainDateTime => {
+    const prevDay = getNextSchoolDay(date.subtract({days: 1}));
+    return Temporal.PlainDateTime.compare(prevDay, getToday) === 1? 
+        prevDay : 
+        getToday;
 }
-
-const getNextDay = (date: Temporal.PlainDateTime):Temporal.PlainDateTime => date.add({days: 1});
-const getPrevDay = (date: Temporal.PlainDateTime):Temporal.PlainDateTime => date.subtract({days: 1});
 
 // Provide a day, and if is still this function should return next school day
 const getNextSchoolDay = (date: Temporal.PlainDateTime) => {
-
-   
-    const isAfterMorningBus = date.hour > 8;
-    const isWeekEnd = 
-        (date.dayOfWeek === 4 && isAfterMorningBus) || 
-        date.dayOfWeek === 5 || 
-        date.dayOfWeek === 6;
-
-    if(isWeekEnd) {
-        return date.add({days: date.daysInWeek - date.dayOfWeek});
-    } 
-
-    return isAfterMorningBus? date.add({days: 1}) : date;
+    // If is Friday after bus pick up should show next Mon
+    // Is Fryday after 8, go to Monday (add 3 days).
+    // Is Saturday, go to Monday (add 2 days).
+    // Is Sunday, go to Monday (add 1 days).
+    const weekDay = date.toLocaleString("en-US", { weekday: 'short' });
+    // if (weekDay === 'Fri' && date.hour >= 8) return date.add({days: 3});
+    if (weekDay === 'Sat') return date.add({days: 2});
+    if (weekDay === 'Sun') return date.add({days: 1});
+    return date;
 }
 
-export { getToday, getTime, getDate, getNextSchoolDay, getNextDay, getPrevDay, toWeekDayName };
+const getDatesObj = (date: Temporal.PlainDateTime) => ({
+    date: getNextSchoolDay(date),
+    dd:  getNextSchoolDay(date).toLocaleString("en-US", { day: '2-digit' }),
+    mm: getNextSchoolDay(date).toLocaleString("en-US", { month: '2-digit' }),
+    yyyy: getNextSchoolDay(date).toLocaleString("en-US", { year: 'numeric' })
+});
+
+export { getToday, getTime, getDate, getNextSchoolDay, getNextDay, getPrevDay, toWeekDayName, getDatesObj };
