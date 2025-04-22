@@ -1,15 +1,14 @@
 import { useWhatItems } from '@/hooks/useWhatItems';
 import * as React from 'react';
 import { Card } from '../Card/Card';
-import { useTime } from '@/hooks/useTime';
+// import { useTime } from '@/hooks/useTime';
+import { useDates } from '@/providers';
+import { toWeekDayName } from '@/utils/Scheduler';
 
 export const BackpackItems: React.FunctionComponent<{}> = () => {
-    const { today } = useTime();
-    const nextWeekday = today === 'Saturday' || today === 'Sunday'? 
-        'Monday' : 
-        today;
-    const items = useWhatItems(nextWeekday);
-
+    const { state: { date } } = useDates();
+    const items = useWhatItems(toWeekDayName(date));
+    
     if(!items) { 
         return null; 
     }

@@ -2,13 +2,13 @@ import { fetchMenuItems } from "@/actions/getSchoolMenu";
 import { FunctionComponent, JSXElementConstructor, ReactElement, ReactNode, ReactPortal, use, useEffect, useState } from "react";
 import { Card } from "../Card/Card";
 import { CardError } from "../Card/CardError";
-import { CardLoading } from "../Card/CardLoadng";
+import { CardLoading } from "../Card/CardLoading";
 import { IItem } from "@/actions/getSchoolMenu.types";
 import { useDates } from "@/providers";
 
 export const SchoolMenu:FunctionComponent<{}> = () => {
-    const [menu, setMenu] = useState<void | IItem[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [ menu, setMenu ] = useState<void | IItem[]>([]);
+    const [ isLoading, setIsLoading ] = useState(true);
     const { state: { date, dd,mm, yyyy} } = useDates();
     
     useEffect(() => {
