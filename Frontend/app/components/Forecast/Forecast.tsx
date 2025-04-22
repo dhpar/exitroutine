@@ -1,7 +1,7 @@
 import { FunctionComponent, use, useEffect, useState } from "react";
 import { Card } from "../Card/Card";
 import { useLocation } from "@/hooks/useLocation";
-import { CardLoading } from "../Card/CardLoadng";
+import { CardLoading } from "../Card/CardLoading";
 import { getWeather, IWeatherResponse } from "@/actions/getForecast";
 import { useDates } from "@/providers";
 import { ApiError } from "next/dist/server/api-utils";
