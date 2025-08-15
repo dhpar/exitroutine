@@ -9,21 +9,20 @@ import { useDates } from "./providers";
 import ChevronLeft from './assets/icons/chevron-left.svg';
 import ChevronRight from './assets/icons/chevron-right.svg';
 import { initialState } from "./reducers";
+import Agenda from "./components/Agenda/Agenda";
 
-export default function Home() {
+export default function Home:FunctionComponent<{}>() {
   const { state, dispatch } = useDates();
   const decreaseDate = () => dispatch({type: 'decrement'});
   const increaseDate = () => dispatch({type: 'increment'});
   const currentDate = () => dispatch({type: 'currentDate'});
-  
+  const isCurrentDateToday = state.date.toPlainDate().toString() === initialState.date.toPlainDate().toString();
   return (
     <main className="grid grid-rows-[auto_1fr_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <div className="flex w-full justify-between items-stretch">
-        {state.date.toPlainDate().toString()}
-        {initialState.date.toPlainDate().toString()}
-        {state.date.toPlainDate().toString() === initialState.date.toPlainDate().toString()? null : <button onClick={decreaseDate} className="py-2 px-4 mr-4 border-slate-50 border-solid border-2  text-slate-50 rounded-lg hover:text-slate-900  hover:bg-slate-50">
+        <button onClick={decreaseDate} className={`py-2 px-4 mr-4   text-slate-50 rounded-lg hover:text-slate-900 {isCurrentDateToday && "border-slate-50 border-solid border-2 hover:bg-slate-50"}`} disabled={isCurrentDateToday}>
           <ChevronLeft />
-        </button>} 
+        </button>
         <div className="flex flex-col items-center">
           <h1 className="text-4xl mb-4" data-testid="page-heading-level-1">
               <span className="text-8xl text-cyan-500">{toWeekDayName(state.date)}</span>
@@ -45,12 +44,17 @@ export default function Home() {
         </Suspense>
         </li>
         <li className="col-span-1">
-          <BackpackItems />
+          <Suspense fallback={<CardLoading />}>
+            <Agenda date={state.date.toPlainDate().toString()} />
+          </Suspense>
         </li>
         <li className="col-span-1">
           <Suspense fallback={<CardLoading />}>
               <SchoolMenu />
           </Suspense>
+        </li>
+        <li className="col-span-1">
+          <BackpackItems />
         </li>
       </ul> 
     </main>
