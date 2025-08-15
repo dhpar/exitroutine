@@ -1,6 +1,7 @@
 "use server"
 import { logHeaders, logResponse } from "@/utils/logger";
-import { IMenuResponse, IRenderItem } from "./getSchoolMenu.types";
+import { IMenuResponse } from "./getSchoolMenu.types";
+
 
 const sortByCategory = (a:any, b:any) => a.category.localeCompare(b.category);
 const pad = (num:string) => Number(num) < 10?  num.padStart(2, '0') : num;
@@ -38,7 +39,7 @@ const filterAndPrepareToRender = (response:IMenuResponse, date:string) => {
 
 export const fetchMenuItems = async (yyyy: string, mm: string, dd: string) => {
     const dateHyphenFormat = `${yyyy}-${pad(mm)}-${pad(dd)}`;
-    const school = 'normandale';
+    const school = 'valley-view';
     
     return await fetch(`https://edinaschools.api.nutrislice.com/menu/api/weeks/school/${school}/menu-type/lunch/${yyyy}/${mm}/${dd}/`)
         .then(responseToJson)

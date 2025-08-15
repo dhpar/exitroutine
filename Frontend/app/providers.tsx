@@ -2,7 +2,8 @@
 import { PropsWithChildren, createContext, useReducer, use, Dispatch, ReactNode } from 'react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { dateReducer, IDateAction, IDateState, initialState } from './reducers';
+import { dateReducer, initialState } from './reducers';
+import { IDateState, IDateAction } from "./reducers.types";
 
 export const DatesStateContext = createContext<{
   state: IDateState;

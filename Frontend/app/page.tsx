@@ -6,44 +6,50 @@ import { BackpackItems } from "./components/BackpackItems/BackpackItems";
 import { SchoolMenu } from "./components/SchoolMenu/SchoolMenu";
 import { CardLoading } from "./components/Card/CardLoading";
 import { useDates } from "./providers";
+import ChevronLeft from './assets/icons/chevron-left.svg';
+import ChevronRight from './assets/icons/chevron-right.svg';
+import { initialState } from "./reducers";
 
 export default function Home() {
   const { state, dispatch } = useDates();
   const decreaseDate = () => dispatch({type: 'decrement'});
   const increaseDate = () => dispatch({type: 'increment'});
   const currentDate = () => dispatch({type: 'currentDate'});
-
+  
   return (
-    <main className="grid grid-rows-[1rem_1rem_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <div>
-        <h1 className="text-4xl" data-testid="page-heading-level-1">
-          <button onClick={decreaseDate} className="py-2 px-4 mr-4 bg-slate-50 text-slate-900 rounded-lg hover:bg-transparent hover:text-slate-50 hover:border-solid hover:border hover:border-slate-50">
-            &lt;
+    <main className="grid grid-rows-[auto_1fr_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <div className="flex w-full justify-between items-stretch">
+        {state.date.toPlainDate().toString()}
+        {initialState.date.toPlainDate().toString()}
+        {state.date.toPlainDate().toString() === initialState.date.toPlainDate().toString()? null : <button onClick={decreaseDate} className="py-2 px-4 mr-4 border-slate-50 border-solid border-2  text-slate-50 rounded-lg hover:text-slate-900  hover:bg-slate-50">
+          <ChevronLeft />
+        </button>} 
+        <div className="flex flex-col items-center">
+          <h1 className="text-4xl mb-4" data-testid="page-heading-level-1">
+              <span className="text-8xl text-cyan-500">{toWeekDayName(state.date)}</span>
+              <span>({state.date.toPlainDate().toString()})</span>
+          </h1>
+      
+          <button onClick={currentDate} className="py-2 px-4 mr-4 text-slate-50 border-slate-50 border-solid border-2 rounded-lg hover:text-slate-900  hover:bg-slate-50">
+              Load today
           </button> 
-            Next school day is <span className="text-8xl text-cyan-500">{ toWeekDayName(state.date) }</span>
-          <button onClick={increaseDate} className="py-2 px-4 mr-4 bg-slate-50 text-slate-900 rounded-lg hover:bg-transparent hover:text-slate-50 hover:border-solid hover:border hover:border-slate-50">
-            &gt;
-          </button>
-        </h1>
-        <button onClick={currentDate} className="py-2 px-4 mr-4 bg-slate-50 text-slate-900 rounded-lg hover:bg-transparent hover:text-slate-50 hover:border-solid hover:border hover:border-slate-50">
-            ↩
-        </button> 
+        </div>
+        <button onClick={increaseDate} className="py-2 px-4 mr-4 border-slate-50 border-solid border-2  text-slate-50 rounded-lg hover:text-slate-900  hover:bg-slate-50">
+          <ChevronRight />
+        </button>
       </div>
-      <h2 className="text-xl">{state.date.toPlainDate().toString()}</h2>
-      <ul className="grid gap-4 grid-cols-3">
-        <li>
+      <ul className="grid gap-4 w-full">
+        <li className="col-span-2">
         <Suspense fallback={<CardLoading />}>
           <Forecast />
         </Suspense>
         </li>
-        <li>
+        <li className="col-span-1">
           <BackpackItems />
         </li>
-        <li>
+        <li className="col-span-1">
           <Suspense fallback={<CardLoading />}>
-            {/* <HydrationBoundary state={dehydrate(new QueryClient)}> */}
               <SchoolMenu />
-            {/* </HydrationBoundary> */}
           </Suspense>
         </li>
       </ul> 
