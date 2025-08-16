@@ -8,7 +8,7 @@ interface CardProps extends PropsWithChildren<HTMLAttributes<HTMLDivElement>>{
 
 export const Card = ({ title, unit, cardText, ...props }: CardProps) => (
   <div 
-    className='text-center bg-slate-600 p-4 rounded-lg shadow-md shadow-slate-600/60 h-full' 
+    className='min-h-60 bg-slate-600 p-4 rounded-lg shadow-md shadow-slate-600/60 h-full flex flex-col justify-items-start gap-8' 
     {...(props.id && {id: props.id})} 
   >
     <h2 className='text-4xl pb-4'>

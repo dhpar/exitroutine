@@ -1,10 +1,10 @@
-import { fetchMenuItems } from "@/actions/getSchoolMenu";
-import { FunctionComponent, JSXElementConstructor, ReactElement, ReactNode, ReactPortal, use, useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { Card } from "../Card/Card";
 import { CardError } from "../Card/CardError";
 import { CardLoading } from "../Card/CardLoading";
-import { IItem } from "@/actions/getSchoolMenu.types";
 import { useDates } from "@/providers";
+import { fetchMenuItems } from "@/api/menu/getSchoolMenu";
+import { IItem } from "@/api/menu/getSchoolMenu.types";
 
 export const SchoolMenu:FunctionComponent<{}> = () => {
     const [ menu, setMenu ] = useState<void | IItem[]>([]);
@@ -19,11 +19,12 @@ export const SchoolMenu:FunctionComponent<{}> = () => {
     }, [date]);
     
     if(isLoading) return <CardLoading />
-    if(!menu && !isLoading) return <CardError message="No menu found" statusCode={0} name={"Error Loading Menu"} />
-
+    if((!menu && !isLoading) || typeof menu === 'undefined') return <CardError message="No menu found" statusCode={0} name={"Error Loading Menu"} />
+    if(menu.length === 0) return <Card title='Lunch Menu'>No menu found.</Card>
+    
     return (
         <Card title='Lunch Menu'>
-            <ul>{menu?.map((item:IItem, index) => (
+            <ul>{menu.map((item:IItem, index:number) => (
                 <li className="text-cyan-500 text-base" key={`${item.food.name}-${index}`}>
                     {item.food.name}
                 </li>

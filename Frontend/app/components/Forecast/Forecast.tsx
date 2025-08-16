@@ -2,7 +2,7 @@ import { FunctionComponent, use, useEffect, useState } from "react";
 import { Card } from "../Card/Card";
 import { useLocation } from "@/hooks/useLocation";
 import { CardLoading } from "../Card/CardLoading";
-import { getWeather, IWeatherResponse } from "@/actions/getForecast";
+import { getWeather, IWeatherResponse } from "@/api/forecast/getForecast";
 import { useDates } from "@/providers";
 import { ApiError } from "next/dist/server/api-utils";
 import { CardError } from "../Card/CardError";
@@ -40,10 +40,10 @@ export const Forecast:FunctionComponent<{}> = () => {
 
     return (
         <Card title="Forecast">
-            <ul data-testid="forecast" className="grid grid-cols-2 gap-4">
+            <ul data-testid="forecast" className="flex justify-around gap-4">
                 <li className="text-cyan-500 text-2xl">
                     {forecast?.WeatherIcon?.Icon}
-                    <span className="text-base block ml-2">
+                    <span className="text-base ml-2">
                         {forecast?.WeatherIcon.label}
                     </span>
                 </li>
@@ -53,14 +53,14 @@ export const Forecast:FunctionComponent<{}> = () => {
                     <span className="text-base"> F</span>
                 </li>
                 <li className="text-cyan-500 text-2xl">
-                    {/* Precipitation */}
-                    {forecast?.precipitation} 
-                    <span className="text-base"> Inches</span>
-                </li>
-                <li className="text-cyan-500 text-2xl">
                     {/* Min Temp */}
                     {forecast?.minTemp} 
                     <span className="text-base"> F</span>
+                </li>
+                <li className="text-cyan-500 text-2xl">
+                    {/* Precipitation */}
+                    {forecast?.precipitation} 
+                    <span className="text-base"> Inches</span>
                 </li>
             </ul>
         </Card>
