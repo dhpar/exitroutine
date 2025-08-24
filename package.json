@@ -19,7 +19,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "cd Frontend && npm run dev",
+    "dev": "cd Frontend && next dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

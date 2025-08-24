@@ -10,14 +10,15 @@ const nextConfig: NextConfig = {
   headers: async () => {
     return [
       {
-         // matching all API routes
-         source: "/:path*",
-         headers: [
-           { key: "Access-Control-Allow-Credentials", value: "false" },
-           { key: "Access-Control-Allow-Origin", value: "*" },
-           { key: "Access-Control-Allow-Methods", value: "GET,OPTIONS,PATCH,DELETE,POST,PUT,HEAD" },
-           { key: "Access-Control-Allow-Headers", value: "*" },
-         ],
+          // matching all API routes
+          source: "/:path*",
+          headers: [
+            { key: "Access-Control-Allow-Credentials", value: "false" },
+            // { key: "Access-Control-Allow-Origin", value: "*" },
+            { key: "Access-Control-Allow-Methods", value: "GET,OPTIONS,PATCH,DELETE,POST,PUT,HEAD" },
+            { key: "Access-Control-Allow-Headers", value: "*" },
+            { key: 'Access-Control-Allow-Origin', value: process.env.NEXT_PUBLIC_APP_URL || '*' }
+          ],
       },
     ];
   },

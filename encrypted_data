@@ -1,0 +1,2 @@
+You didn't pass in a key as an env var or as a file, to top it all,
+                    there's no keys in your cloak keyring. You need to import a key.

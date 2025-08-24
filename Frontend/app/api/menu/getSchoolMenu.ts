@@ -1,24 +1,13 @@
 "use server"
 import { logHeaders, logResponse } from "@/utils/logger";
 import { IMenuResponse } from "./getSchoolMenu.types";
-
-
-const sortByCategory = (a:any, b:any) => a.category.localeCompare(b.category);
-const pad = (num:string) => Number(num) < 10?  num.padStart(2, '0') : num;
-const responseToJson = (response:Response) => {
-    logHeaders(response);
-
-    if (!response.ok) {
-        throw new Error(`HTTP error, status = ${response.status}`);
-    }
-
-    return response.json();
-}
+import { pad } from "@/utils/pad";
+import { sortByCategory, responseToJson } from "@/utils/utils";
 
 const filterAndPrepareToRender = (response:IMenuResponse, date:string) => {
     const currentDay = response.days.find((day) => day.date === date);
-    logResponse(currentDay?.menu_info);
-    logResponse(currentDay?.menu_items);
+    // logResponse(currentDay?.menu_info);
+    // logResponse(currentDay?.menu_items);
     if(!currentDay) throw new Error("No menu found for this day!");
 
     const resp = currentDay.menu_items
@@ -26,7 +15,7 @@ const filterAndPrepareToRender = (response:IMenuResponse, date:string) => {
             // Filter by category, food that B is not interested in.
             const foodCategoriesToExclude = ['condiment', 'beverage'];
             if(item.food && !foodCategoriesToExclude.includes(item.category)) {
-                logResponse(item)
+                // logResponse(item)
                 return {
                     food: item.food.name, 
                     category: item.food.food_category 

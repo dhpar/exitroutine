@@ -10,27 +10,52 @@ import ChevronLeft from './assets/icons/chevron-left.svg';
 import ChevronRight from './assets/icons/chevron-right.svg';
 import { initialState } from "./reducers";
 import Agenda from "./components/Agenda/Agenda";
+import ical from 'ical';
 
-export default function Home:FunctionComponent<{}>() {
-  const { state, dispatch } = useDates();
+const SCHOOL = 'valley-view';  
+
+async function fetchMenu (yyyy: string, mm: string, dd: string) { 
+  return await fetch(`https://edinaschools.api.nutrislice.com/menu/api/weeks/school/${SCHOOL}/menu-type/lunch/${yyyy}/${pad(mm)}/${pad(dd)}/`)
+    .then(resp => resp.json())
+}
+
+async function fetchCalendar (url:string) {
+  const fetchCalendar = await fetch(url, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'text/calendar',
+          },
+  });
+  const calendarText = await fetchCalendar.text();
+  return Object.values(ical.parseICS(calendarText));
+}
+
+export default async function Home() {
+  const { state: {dd, mm, yyyy, date}, dispatch } = useDates();
   const decreaseDate = () => dispatch({type: 'decrement'});
   const increaseDate = () => dispatch({type: 'increment'});
-  const currentDate = () => dispatch({type: 'currentDate'});
-  const isCurrentDateToday = state.date.toPlainDate().toString() === initialState.date.toPlainDate().toString();
+  const getToday = () => dispatch({type: 'getToday'});
+  const isCurrentDateToday = date.toPlainDate().toString() === initialState.date.toPlainDate().toString();
+  
+   const [menu, calendar] = await Promise.all([
+    fetchMenu(yyyy, mm, dd),
+    fetchCalendar('https://valleyview.edinaschools.org/cf_calendar/feed.cfm?type=ical&feedID=480A95723BF64AF6A939E3131C04210A'),
+  ]);
+
   return (
     <main className="grid grid-rows-[auto_1fr_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <div className="flex w-full justify-between items-stretch">
-        <button onClick={decreaseDate} className={`py-2 px-4 mr-4   text-slate-50 rounded-lg hover:text-slate-900 {isCurrentDateToday && "border-slate-50 border-solid border-2 hover:bg-slate-50"}`} disabled={isCurrentDateToday}>
+        <button onClick={decreaseDate} className={`py-2 px-4 mr-4   text-slate-50 rounded-lg ${!isCurrentDateToday && "border-slate-50 border-solid border-2 hover:bg-slate-50 hover:text-slate-900"}`} disabled={isCurrentDateToday}>
           <ChevronLeft />
         </button>
         <div className="flex flex-col items-center">
           <h1 className="text-4xl mb-4" data-testid="page-heading-level-1">
-              <span className="text-8xl text-cyan-500">{toWeekDayName(state.date)}</span>
-              <span>({state.date.toPlainDate().toString()})</span>
+              <span className="text-8xl text-cyan-500">{toWeekDayName(date)}</span>
+              <span>({date.toPlainDate().toString()})</span>
           </h1>
       
-          <button onClick={currentDate} className="py-2 px-4 mr-4 text-slate-50 border-slate-50 border-solid border-2 rounded-lg hover:text-slate-900  hover:bg-slate-50">
-              Load today
+          <button onClick={getToday} className="py-2 px-4 mr-4 text-slate-50 border-slate-50 border-solid border-2 rounded-lg hover:text-slate-900  hover:bg-slate-50">
+              Today
           </button> 
         </div>
         <button onClick={increaseDate} className="py-2 px-4 mr-4 border-slate-50 border-solid border-2  text-slate-50 rounded-lg hover:text-slate-900  hover:bg-slate-50">
@@ -45,12 +70,12 @@ export default function Home:FunctionComponent<{}>() {
         </li>
         <li className="col-span-1">
           <Suspense fallback={<CardLoading />}>
-            <Agenda date={state.date.toPlainDate().toString()} />
+            <Agenda calendar={calendar}/>
           </Suspense>
         </li>
         <li className="col-span-1">
           <Suspense fallback={<CardLoading />}>
-              <SchoolMenu />
+              <SchoolMenu menu={menu}/>
           </Suspense>
         </li>
         <li className="col-span-1">

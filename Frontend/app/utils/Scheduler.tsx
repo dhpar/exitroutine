@@ -1,4 +1,4 @@
-import { Temporal } from '@js-temporal/polyfill';
+import { Temporal, toTemporalInstant, Intl } from '@js-temporal/polyfill';
 
 const getToday = Temporal.Now.plainDateTimeISO();
 const getTime = Temporal.Now.plainTimeISO();
@@ -21,8 +21,7 @@ const getNextDay = (date: Temporal.PlainDateTime):Temporal.PlainDateTime => getN
 const getPrevDay = (date: Temporal.PlainDateTime):Temporal.PlainDateTime => {
     const prevDay = getNextSchoolDay(date.subtract({days: 1}));
     return Temporal.PlainDateTime.compare(prevDay, getToday) === 1? 
-        prevDay : 
-        getToday;
+        prevDay : getToday;
 }
 
 // Provide a day, and if is still this function should return next school day
@@ -32,10 +31,42 @@ const getNextSchoolDay = (date: Temporal.PlainDateTime) => {
     // Is Saturday, go to Monday (add 2 days).
     // Is Sunday, go to Monday (add 1 days).
     const weekDay = date.toLocaleString("en-US", { weekday: 'short' });
-    // if (weekDay === 'Fri' && date.hour >= 8) return date.add({days: 3});
+   
     if (weekDay === 'Sat') return date.add({days: 2});
     if (weekDay === 'Sun') return date.add({days: 1});
     return date;
+}
+
+const fromDateToTemporal = (
+    date: Date, 
+    fractionalSecondDigits: 3 | 2 | 1 | undefined = 3
+) => {
+    const formatter = new Intl.DateTimeFormat('en', {
+        timeZone: 'America/Chicago',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: 'numeric',
+        fractionalSecondDigits,
+        timeZoneName: 'longOffset'
+    });
+
+    // Extract each date/time component
+    const parts = formatter.formatToParts(date).filter(({ type }) => type !== 'literal');
+    const { 
+        year, 
+        month, 
+        day, 
+        timeZoneName 
+    } = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+
+    const offset = timeZoneName === 'GMT' ? '+00:00' : timeZoneName.replace('GMT', '');
+
+    const dateAndTime = `${year}-${month}-${day}T00:00:00`;
+
+    return Temporal.PlainDateTime.from(`${dateAndTime}${offset}[America/Chicago]`);
 }
 
 const getDatesObj = (date: Temporal.PlainDateTime) => ({
@@ -45,4 +76,14 @@ const getDatesObj = (date: Temporal.PlainDateTime) => ({
     yyyy: getNextSchoolDay(date).toLocaleString("en-US", { year: 'numeric' })
 });
 
-export { getToday, getTime, getDate, getNextSchoolDay, getNextDay, getPrevDay, toWeekDayName, getDatesObj };
+export { 
+    getToday, 
+    getTime, 
+    getDate, 
+    getNextSchoolDay, 
+    getNextDay, 
+    getPrevDay, 
+    toWeekDayName, 
+    getDatesObj, 
+    fromDateToTemporal 
+};

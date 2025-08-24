@@ -6,7 +6,7 @@ import { useDates } from "@/providers";
 import { fetchMenuItems } from "@/api/menu/getSchoolMenu";
 import { IItem } from "@/api/menu/getSchoolMenu.types";
 
-export const SchoolMenu:FunctionComponent<{}> = () => {
+export const SchoolMenu:FunctionComponent<{menu}> = () => {
     const [ menu, setMenu ] = useState<void | IItem[]>([]);
     const [ isLoading, setIsLoading ] = useState(true);
     const { state: { date, dd,mm, yyyy} } = useDates();
@@ -15,7 +15,6 @@ export const SchoolMenu:FunctionComponent<{}> = () => {
         fetchMenuItems(yyyy, mm, dd)
             .then(setMenu)
             .finally(() => setIsLoading(false))
-            .catch(console.assert);
     }, [date]);
     
     if(isLoading) return <CardLoading />
@@ -26,7 +25,7 @@ export const SchoolMenu:FunctionComponent<{}> = () => {
         <Card title='Lunch Menu'>
             <ul>{menu.map((item:IItem, index:number) => (
                 <li className="text-cyan-500 text-base" key={`${item.food.name}-${index}`}>
-                    {item.food.name}
+                    {item.food.name} - {item.food.food_category}
                 </li>
             ))}</ul>
         </Card>

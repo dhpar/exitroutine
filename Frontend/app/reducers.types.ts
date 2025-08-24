@@ -3,7 +3,8 @@ import { Temporal } from "@js-temporal/polyfill";
 export const dataReducerStateActions = {
     INCREMENT: 'increment',
     DECREMENT: 'decrement',
-    CURRENTDATE: 'currentDate'
+    CURRENTDATE: 'currentDate',
+    GETTODAY: 'getToday',
 } as const;
 
 export interface IDateState {

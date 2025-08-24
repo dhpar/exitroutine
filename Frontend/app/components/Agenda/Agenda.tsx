@@ -1,85 +1,51 @@
-import { FC, FunctionComponent, use } from 'react';
-import ical from 'ical';
+"use client"
+import { FunctionComponent, useEffect, useState } from 'react';
+import { getCalendar } from '@/api/calendar/getCalendar';
+import { Card } from '../Card/Card';
+import { useDates } from '@/providers';
+import { CalendarComponent } from 'ical';
+import { CardLoading } from '../Card/CardLoading';
+import { fromDateToTemporal } from '@/utils/Scheduler';
+import { Temporal } from '@js-temporal/polyfill';
 
-interface AgendaProps {
-    date: string; // Expected format: YYYY-MM-DD
-}
 
-interface CalendarEvent {
-    summary: string;
-    start: Date;
-    end: Date;
-    description?: string;
-}
+// Schoology calendar - webcal://edinaschools.schoology.com/calendar/feed/ical/1755549812/389bf972b855085a3aed23dbb4d3947f/ical.ics
 
-// async function fetchAndParseICS() {
-//     try {
-//         // Replace this URL with your actual calendar ICS feed URL
-//         const response = await fetch('https://valleyview.edinaschools.org/calendar/calendar_368.ics');
-//         const icsData = await response.text();
-//         const events = ical.parseICS(icsData);
-//         return events;
-//     } catch (error) {
-//         console.error('Error fetching calendar data:', error);
-//         return {};
-//     }
-// }
+// School A/B days calendar - https://valleyview.edinaschools.org/calendar/calendar_368.ics
+const findDay = (calendar: CalendarComponent[], day: Temporal.PlainDateTime) =>  
+    calendar.find(({start}) => {
+        if(!start) return null;
+        const currentCalendarDay = Temporal.PlainDate.from(fromDateToTemporal(start).toString());
+        const currentSelectedDay = Temporal.PlainDate.from(day.toString());
+        return currentCalendarDay.equals(currentSelectedDay);
+    });
 
-function filterEventsByDate(events: any, targetDate: string): CalendarEvent[] {
-    const dateToCheck = new Date(targetDate);
-    const filteredEvents: CalendarEvent[] = [];
+const Agenda: FunctionComponent = ({ }) => {
+    const [ calendar, setCalendar ] = useState<CalendarComponent[] | null>();
+    const [ dayFromCalendar, setDayFromCalendar ] = useState<CalendarComponent | null>();
+    const [ isLoading, setIsLoading ] = useState<boolean>(true);
+    const { state: { date } } = useDates();
 
-    for (const event of Object.values(events)) {
-        const evt = event as any;
-        if (evt.type !== 'VEVENT') continue;
+    useEffect(() => {
+        if(calendar) return;
+        getCalendar('https://valleyview.edinaschools.org/calendar/calendar_368.ics')
+            .then(setCalendar)
+            .finally(() => setIsLoading(false));
+    },[]);
 
-        const eventDate = new Date(evt.start);
-        if (
-            eventDate.getFullYear() === dateToCheck.getFullYear() &&
-            eventDate.getMonth() === dateToCheck.getMonth() &&
-            eventDate.getDate() === dateToCheck.getDate()
-        ) {
-            filteredEvents.push({
-                summary: evt.summary,
-                start: evt.start,
-                end: evt.end,
-                description: evt.description
-            });
-        }
-    }
+    useEffect(() => {
+        if(!calendar) return;
+        const calendarDay = findDay(calendar, date);
+        setDayFromCalendar(calendarDay);
+    }, [date]);
 
-    return filteredEvents.sort((a, b) => a.start.getTime() - b.start.getTime());
-}
-
-const Agenda: FunctionComponent<AgendaProps> = ({ date }) => {
-    // const events = use(fetchAndParseICS());
-    const dailyEvents = filterEventsByDate(events, date);
-
+    if(isLoading) return <CardLoading />
+    
     return (
-        <div className="agenda">
-            <h2>Schedule for {date}</h2>
-            {dailyEvents.length === 0 ? (
-                <p>No events scheduled for this date</p>
-            ) : (
-                <ul className="event-list">
-                    {dailyEvents.map((event, index) => (
-                        <li key={index} className="event-item">
-                            <div className="event-time">
-                                {event.start.toLocaleTimeString()} - {event.end.toLocaleTimeString()}
-                            </div>
-                            <div className="event-summary">
-                                {event.summary}
-                            </div>
-                            {event.description && (
-                                <div className="event-description">
-                                    {event.description}
-                                </div>
-                            )}
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
+        <Card title='Agenda'>
+            <h2>{dayFromCalendar? dayFromCalendar?.summary : "Couldn't find a calendar, outside of school year?"}</h2>
+            <p>{dayFromCalendar? dayFromCalendar?.description : ""}</p>
+        </Card>
     );
 };
 
