@@ -1,3 +1,4 @@
+"use client"
 import { useWhatItems } from '@/hooks/useWhatItems';
 import * as React from 'react';
 import { Card } from '../Card/Card';

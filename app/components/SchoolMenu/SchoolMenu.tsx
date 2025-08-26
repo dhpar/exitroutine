@@ -1,3 +1,4 @@
+"use client"
 import { FunctionComponent, useEffect, useState } from "react";
 import { Card } from "../Card/Card";
 import { CardError } from "../Card/CardError";
