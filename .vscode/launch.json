@@ -5,7 +5,9 @@
             "type": "node-terminal",
             "request": "launch",
             "command": "npm run dev",
+            "command": "npm run dev",
             "resolveSourceMapLocations" : [
+                "${workspaceFolder}/.next",
                 "${workspaceFolder}/.next",
                 "${workspaceFolder}/**",
                 "!**/node_modules/**"
@@ -18,7 +20,7 @@
             "name": "Next.js: debug client-side",
             "type": "chrome",
             "request": "launch",
-            "url": "https://localhost:3000",
+            "url": "http://localhost:3000",
             "cwd": "${workspaceFolder}",
             "serverReadyAction":{
                 "action": "startDebugging",
@@ -33,7 +35,9 @@
             "type": "node-terminal",
             "request": "launch",
             "command": "npm run test",
+            "command": "npm run test",
             "resolveSourceMapLocations" : [
+                "${workspaceFolder}/.next",
                 "${workspaceFolder}/.next",
                 "${workspaceFolder}/**",
                 "!**/node_modules/**"
@@ -43,6 +47,7 @@
     
     "compounds": [
         {
+            "name": "-> Full stack",
             "name": "-> Full stack",
             "configurations": [
                 // "Next.js: debug server-side", 
