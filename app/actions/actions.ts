@@ -1,9 +1,11 @@
+import { IMenuResponse } from '@/api/menu/getSchoolMenu.types';
 import { forecastIcons } from '@/components/Forecast/ForecastIcons';
 import { pad } from '@/utils/utils';
 import { Temporal } from '@js-temporal/polyfill';
-import ical, { CalendarComponent } from 'ical';
+import ical from 'ical';
 import { fetchWeatherApi } from 'openmeteo';
 import { JSX } from 'react';
+
 const SCHOOL = 'valley-view';  
 
 interface IPosition {
@@ -25,13 +27,13 @@ export interface IWeatherResponse {
   precipitation: string
 }
 
-export async function fetchMenu (yyyy: string, mm: string, dd: string) { 
+export async function fetchMenu (yyyy: string, mm: string, dd: string):Promise<IMenuResponse> { 
   return await fetch(`https://edinaschools.api.nutrislice.com/menu/api/weeks/school/${SCHOOL}/menu-type/lunch/${yyyy}/${pad(mm)}/${pad(dd)}/`)
     .then(resp => resp.json())
 }
 
-export async function fetchCalendar (url:string) {
-  const fetchCalendar = await fetch(url, {
+export async function fetchCalendar() {
+  const fetchCalendar = await fetch('https://valleyview.edinaschools.org/cf_calendar/feed.cfm?type=ical&feedID=480A95723BF64AF6A939E3131C04210A', {
       method: 'GET',
       headers: {
           'Content-Type': 'text/calendar',
@@ -41,7 +43,26 @@ export async function fetchCalendar (url:string) {
   return Object.values(ical.parseICS(calendarText));
 }
 
-
+export async function fetchSchoologyCalendar(yyyy: string, mm: string, dd: string) {
+  debugger;
+  return await fetch(`https://edinaschools.infinitecampus.org/campus/resources/portal/roster?_expand=%7BsectionPlacements-%7Bterm%7D%7D&_date=${yyyy}-${mm}-${dd}&personID=21927`, {
+      method: 'GET',
+      referrer: "https://edinaschools.infinitecampus.org/campus/apps/portal/parent/calendar",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "accept": "application/json, text/plain, */*",
+        "accept-language": "en-US,en;q=0.9,ca-ES;q=0.8,ca;q=0.7,es-ES;q=0.6,es;q=0.5",
+        "cache-control": "no-cache",
+        "expires": "0",
+        "sec-ch-ua-mobile": "?0",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin"
+      }
+  })
+    .then(resp => resp.json());
+} 
 
 // For endDate needs a date with the following format: yyyy-mm-dd, with leading zeros (2025-02-02)
 export const fetchWeather = async ({lat, lon}: IPosition, endDate: string): Promise<IWeatherResponse> => {

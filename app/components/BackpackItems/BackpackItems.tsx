@@ -17,10 +17,7 @@ export const BackpackItems: React.FunctionComponent<{}> = () => {
     return <Card title="Items for school">
         <ul>
             {items.map((item, index) => 
-                <li 
-                    className="text-cyan-500 text-base" 
-                    key={`${item}-${index}`}
-                >       
+                <li className="text-cyan-500 text-base" key={`${item}-${index}`}>       
                     {item}
                 </li>
             )}

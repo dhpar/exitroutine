@@ -1,10 +1,7 @@
 "use client"
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent } from "react";
 import { Card } from "../Card/Card";
-import { CardError } from "../Card/CardError";
-import { CardLoading } from "../Card/CardLoading";
 import { useDates } from "@/providers";
-import { fetchMenuItems } from "@/api/menu/getSchoolMenu";
 import { IItem, IMenuResponse } from "@/api/menu/getSchoolMenu.types";
 import { sortByCategory } from "@/utils/utils";
 import { pad } from "@/utils/pad";
@@ -13,51 +10,76 @@ interface IMenu {
     menu: IMenuResponse
 }
 
-const filterAndPrepareToRender = (response:IMenuResponse, date:string) => {
-    const currentDay = response.days.find((day) => day.date === date);
-    // logResponse(currentDay?.menu_info);
-    // logResponse(currentDay?.menu_items);
-    if(!currentDay) throw new Error("No menu found for this day!");
+interface GroupedItems {
+    [category: string]: IItem[];
+}
 
-    const resp = currentDay.menu_items
-        .filter(item => {
-            // Filter by category, food that B is not interested in.
-            const foodCategoriesToExclude = ['condiment', 'beverage'];
-            if(item.food && !foodCategoriesToExclude.includes(item.category)) {
-                // logResponse(item)
-                return {
-                    food: item.food.name, 
-                    category: item.food.food_category 
-                }
+const filterAndPrepareToRender = (response: IMenuResponse, date: string): GroupedItems | Error => {
+    const currentDay = response.days.find((day) => day.date === date);
+    
+    if (!currentDay) return new Error("No menu found for this day!");
+    
+    // Filter out items with null food, sort and group into categories.
+    return currentDay.menu_items
+        .filter(item => item.food !== null)
+        .sort(sortByCategory)
+        .reduce((acc, item) => {
+            const category = item.food.food_category;
+
+            if (!acc[category]) {
+                acc[category] = [];
             }
-        })
-        .sort(sortByCategory);
-    return resp;
+            acc[category].push(item);
+            return acc;
+        }, {} as GroupedItems);
 }
 
 export const SchoolMenu:FunctionComponent<IMenu> = ({menu}) => {
-    // const [ menu, setMenu ] = useState<void | IItem[]>([]);
-    // const [ isLoading, setIsLoading ] = useState(true);
-    const { state: { date, dd,mm, yyyy} } = useDates();
-    
-    // useEffect(() => {
-    //     fetchMenuItems(yyyy, mm, dd)
-    //         .then(setMenu)
-    //         .finally(() => setIsLoading(false))
-    // }, [date]);
-    
-    // if(isLoading) return <CardLoading />
-    // if((!menu && !isLoading) || typeof menu === 'undefined') return <CardError message="No menu found" statusCode={0} name={"Error Loading Menu"} />
-    // if(menu.length === 0) return <Card title='Lunch Menu'>No menu found.</Card>
+    const { state: { dd,mm, yyyy} } = useDates();
     const dateHyphenFormat = `${yyyy}-${pad(mm)}-${pad(dd)}`;
+    const result = Object.entries(filterAndPrepareToRender(menu, dateHyphenFormat));
+
+    if (result instanceof Error) {
+        return (
+            <Card title='Lunch Menu'>
+                <p className="text-gray-100">Error: {result.message}</p>
+            </Card>
+        );
+    }
     
+    if (result.length === 0) {
+        return (
+            <Card title='Lunch Menu'>
+                <p className="text-gray-100">
+                    No menu items available for this day.
+                </p>
+            </Card>
+        );
+    }
+
     return (
         <Card title='Lunch Menu'>
-            <ul>{filterAndPrepareToRender(menu, dateHyphenFormat).map((item:IItem, index:number) => (
-                <li className="text-cyan-500 text-base" key={`${item.food.name}-${index}`}>
-                    {item.food.name} - {item.food.food_category}
-                </li>
-            ))}</ul>
+            <ul>
+                {result.map(([category, items]) => (
+                    <li className="text-cyan-500 text-base mb-2" key={category}>
+                        <details>
+                            <summary className="font-semibold cursor-pointer capitalize">
+                                {category} ({items.length} items)
+                            </summary>
+                            <ul className="ml-4 mt-2">
+                                {items.map((item:IItem, index:number) => (
+                                    <li 
+                                        key={`${item.food.name}-${index}`}
+                                        className="text-gray-100 text-sm py-1 capitalize"
+                                    >
+                                        <a href={item.food.image_url}>{item.food.name}</a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </details>
+                    </li>
+                ))}
+            </ul>
         </Card>
     );
 }

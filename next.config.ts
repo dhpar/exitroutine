@@ -27,19 +27,6 @@ const nextConfig: NextConfig = {
       hmrRefreshes: true
     },
   },
-  // module: {
-  //   exports: {
-  //     turbopack: {
-  //       rules: {
-  //         '*.svg': {
-  //           loaders: ['@svgr/webpack'],
-  //           as: '*.js',
-  //         },
-  //       },
-  //     },
-  //   }
-  // }
-
   
   webpack(config) {
     // Grab the existing rule that handles SVG imports

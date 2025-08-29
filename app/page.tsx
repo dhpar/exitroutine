@@ -11,15 +11,17 @@ import { DateHero } from "./components/DateHero/DateHero";
 export default async function Home() {
   const { dd, mm, yyyy } = getDatesObj(getToday);
   
-  const [menu, calendar] = await Promise.all([
+  const [menu, schoolCalendar] = await Promise.all([
     fetchMenu(yyyy, mm, dd),
-    fetchCalendar('https://valleyview.edinaschools.org/cf_calendar/feed.cfm?type=ical&feedID=480A95723BF64AF6A939E3131C04210A'),
+    fetchCalendar()
   ]);
 
   return (
-    <main className="grid grid-rows-[auto_1fr_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <DateHero />
-      <ul className="grid gap-4 w-full">
+    <main className="grid grid-rows-[auto_1fr_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] ">
+      <ul className="grid gap-4 min-w-0 grid-cols-2 max-w-full">
+        <li className="col-span-2">
+          <DateHero />
+        </li>
         <li className="col-span-2">
         <Suspense fallback={<CardLoading />}>
           <Forecast />
@@ -27,7 +29,7 @@ export default async function Home() {
         </li>
         <li className="col-span-1">
           <Suspense fallback={<CardLoading />}>
-            <Agenda calendar={calendar}/>
+            <Agenda calendar={schoolCalendar}/>
           </Suspense>
         </li>
         <li className="col-span-1">
