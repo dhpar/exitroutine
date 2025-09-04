@@ -18,7 +18,7 @@
             "name": "Next.js: debug client-side",
             "type": "chrome",
             "request": "launch",
-            "url": "https://localhost:3000",
+            "url": "http://localhost:3000",
             "cwd": "${workspaceFolder}",
             "serverReadyAction":{
                 "action": "startDebugging",
@@ -45,10 +45,9 @@
         {
             "name": "-> Full stack",
             "configurations": [
-                // "Next.js: debug server-side", 
+                "Next.js: debug server-side", 
                 "Next.js: debug client-side"
             ],
-            "preLaunchTask": "npm: dev - Frontend",
             "stopAll": true
         }
     ]

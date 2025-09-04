@@ -3,43 +3,62 @@ import { FunctionComponent, useEffect, useState } from 'react';
 import { Card } from '../Card/Card';
 import { useDates } from '@/providers';
 import { CalendarComponent } from 'ical';
-import { CardLoading } from '../Card/CardLoading';
 import { fromDateToTemporal } from '@/utils/Scheduler';
 import { Temporal } from '@js-temporal/polyfill';
-
-
-// Schoology calendar - webcal://edinaschools.schoology.com/calendar/feed/ical/1755549812/389bf972b855085a3aed23dbb4d3947f/ical.ics
-
-// School A/B days calendar - https://valleyview.edinaschools.org/calendar/calendar_368.ics
-const findDay = (calendar: CalendarComponent[], day: Temporal.PlainDateTime) =>  
-    calendar.find(({start}) => {
-        if(!start) return null;
-        const currentCalendarDay = Temporal.PlainDate.from(fromDateToTemporal(start).toString());
-        const currentSelectedDay = Temporal.PlainDate.from(day.toString());
-        return currentCalendarDay.equals(currentSelectedDay);
-    });
+import aday from './aday.json';
+import bday from './bday.json';
+import { TDaySchema, TSectionPlacements } from './day';
 
 interface IAgenda {
     calendar: CalendarComponent[];
 }
+
+
+const findDay = (calendar: CalendarComponent[], day: Temporal.PlainDateTime) =>  {
+    const currentSelectedDay = Temporal.PlainDate.from(day.toString());
+    return calendar.find(({start}) => {
+        if(!start) return null;
+        const currentCalendarDay = Temporal.PlainDate.from(fromDateToTemporal(start).toString());
+        return currentCalendarDay.equals(currentSelectedDay);
+    });
+}
+
+const isInTerm = (section:TSectionPlacements) => {
+    const { state: { date } } = useDates();
+    const isCurrentDateAfterStartDate = 
+        Temporal.PlainDate.compare(date, section.startDate) >= 0;
+    const isCurrentDateBeforeEndDate = 
+        Temporal.PlainDate.compare(date, section.endDate) <= 0;
+    const isInTerm = isCurrentDateAfterStartDate && isCurrentDateBeforeEndDate;
+
+    return isInTerm;
+} 
+
 const Agenda: FunctionComponent<IAgenda> = ({ calendar }) => {
     const [ dayFromCalendar, setDayFromCalendar ] = useState<CalendarComponent | null>();
-    const [ isLoading, setIsLoading ] = useState<boolean>(true);
     const { state: { date } } = useDates();
+    
+    const subjects = (dayType:Array<TDaySchema>) => dayType.map(({sectionPlacements}) => {
+        const filterOffTerms = sectionPlacements.filter(isInTerm);
+        return filterOffTerms.map((section, i) => {
+            return <li key={i}>
+                {section.term.startDate} - {section.term.endDate}: {section.courseName}
+            </li>}
+        )
+    });
 
     useEffect(() => {
         if(!calendar) return;
-        const calendarDay = findDay(calendar, date);
-        setDayFromCalendar(calendarDay);
-        setIsLoading(false);
+        setDayFromCalendar(findDay(calendar, date));
     }, [date]);
 
-    if(isLoading) return <CardLoading />
-    
     return (
         <Card title='Agenda'>
             <h2>{dayFromCalendar? dayFromCalendar?.summary : "Couldn't find a calendar, outside of school year?"}</h2>
-            <p>{dayFromCalendar? dayFromCalendar?.description : ""}</p>
+            { dayFromCalendar? <p>{dayFromCalendar.description}</p>: "" }
+            <ul>
+                {dayFromCalendar?.summary === 'A Day'? subjects(aday): subjects(bday) }
+            </ul>
         </Card>
     );
 };

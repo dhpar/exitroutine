@@ -8,6 +8,7 @@ import Cloud from "@assets/icons/cloud.svg";
 import Sun from "@assets/icons/sun.svg";
 import Umbrella from "@assets/icons/umbrella.svg";
 import Wind from "@assets/icons/wind.svg";
+import AlertCircle from "@assets/icons/alert-circle.svg"
 
 interface IWeatherCodeItem {
     code: number;
@@ -199,8 +200,13 @@ export const forecastIcons = (code: number) => {
             label: 'Thunderstorm with Heavy Hail',
             color: 'red-700',
             Icon: <CloudLightning {...iconProps} />
+        },
+        {
+            code: -1,
+            label: "Error",
+            color: 'red-700',
+            Icon: <AlertCircle {...iconProps} />
         }
-
     ].find(
         weatherCodeItem => weatherCodeItem.code === code
     ) || {
