@@ -2,7 +2,9 @@ import { IMenuResponse } from '@/api/menu/getSchoolMenu.types';
 import { forecastIcons } from '@/components/Forecast/ForecastIcons';
 import { pad } from '@/utils/utils';
 import { Temporal } from '@js-temporal/polyfill';
+import { WeatherApiResponse } from '@openmeteo/sdk/weather-api-response';
 import ical from 'ical';
+import { convertSegmentPathToStaticExportFilename } from 'next/dist/shared/lib/segment-cache/segment-value-encoding';
 import { fetchWeatherApi } from 'openmeteo';
 import { JSX } from 'react';
 
@@ -30,21 +32,23 @@ export interface IWeatherResponse {
 export async function fetchMenu (yyyy: string, mm: string, dd: string):Promise<IMenuResponse> { 
   return await fetch(`https://edinaschools.api.nutrislice.com/menu/api/weeks/school/${SCHOOL}/menu-type/lunch/${yyyy}/${pad(mm)}/${pad(dd)}/`)
     .then(resp => resp.json())
+    .catch(console.error);
 }
 
 export async function fetchCalendar() {
-  const fetchCalendar = await fetch('https://valleyview.edinaschools.org/cf_calendar/feed.cfm?type=ical&feedID=480A95723BF64AF6A939E3131C04210A', {
-      method: 'GET',
-      headers: {
-          'Content-Type': 'text/calendar',
-      },
-  });
-  const calendarText = await fetchCalendar.text();
-  return Object.values(ical.parseICS(calendarText));
+  return await fetch(
+    'https://valleyview.edinaschools.org/cf_calendar/feed.cfm?type=ical&feedID=480A95723BF64AF6A939E3131C04210A', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'text/calendar',
+        },
+    })
+    .then(resp => resp.text())
+    .then(resp => Object.values(ical.parseICS(resp)))
+    .catch(console.error);
 }
 
 export async function fetchSchoologyCalendar(yyyy: string, mm: string, dd: string) {
-  debugger;
   return await fetch(`https://edinaschools.infinitecampus.org/campus/resources/portal/roster?_expand=%7BsectionPlacements-%7Bterm%7D%7D&_date=${yyyy}-${mm}-${dd}&personID=21927`, {
       method: 'GET',
       referrer: "https://edinaschools.infinitecampus.org/campus/apps/portal/parent/calendar",
@@ -61,36 +65,48 @@ export async function fetchSchoologyCalendar(yyyy: string, mm: string, dd: strin
         "sec-fetch-site": "same-origin"
       }
   })
-    .then(resp => resp.json());
+    .then(resp => resp.json())
+    .catch(console.error);
 } 
+// Helper function to form time ranges, the index follows the order in which the different parameters where requested.
+    // ie: for ```"daily": ["weather_code", "apparent_temperature_max"]```, we need to use the index = 0 for the weather code.
+const getVariable = (index: number, resp:WeatherApiResponse[]) => resp[0].daily()!.variables(index)!.valuesArray()![0];
 
 // For endDate needs a date with the following format: yyyy-mm-dd, with leading zeros (2025-02-02)
 export const fetchWeather = async ({lat, lon}: IPosition, endDate: string): Promise<IWeatherResponse> => {
-  const responses = await fetchWeatherApi(
-    "https://api.open-meteo.com/v1/forecast", 
-    {
-        "latitude": lat,
-        "longitude": lon,
-        "temperature_unit": "fahrenheit",
-        "daily": [
-            "weather_code", 
-            "apparent_temperature_max", 
-            "apparent_temperature_min", 
-            "precipitation_probability_max"
-        ],
-        "start_date": Temporal.PlainDate.from(endDate),
-        "end_date": Temporal.PlainDate.from(endDate).add({days: 1}),   
-    }, 
-  );
-  
-  // Helper function to form time ranges, the index follows the order in which the different parameters where requested.
-  // ie: for ```"daily": ["weather_code", "apparent_temperature_max"]```, we need to use the index = 0 for the weather code.
-  const getVariable = (index: number) => responses[0].daily()!.variables(index)!.valuesArray()![0];
-  
-  return {
-    WeatherIcon: forecastIcons(getVariable(0)),
-    maxTemp: getVariable(1).toFixed(0),
-    minTemp: getVariable(2).toFixed(0),
-    precipitation: getVariable(3).toFixed(0)
+  try{
+    const responses = await fetchWeatherApi(
+      "https://api.open-meteo.com/v1/forecast", 
+      {
+          "latitude": lat,
+          "longitude": lon,
+          "temperature_unit": "fahrenheit",
+          "daily": [
+              "weather_code", 
+              "apparent_temperature_max", 
+              "apparent_temperature_min", 
+              "precipitation_probability_max"
+          ],
+          "start_date": Temporal.PlainDate.from(endDate),
+          "end_date": Temporal.PlainDate.from(endDate).add({days: 1}),   
+      }, 
+    );
+    
+    
+    
+    return {
+      WeatherIcon: forecastIcons(getVariable(0, responses)),
+      maxTemp: getVariable(1, responses).toFixed(0),
+      minTemp: getVariable(2, responses).toFixed(0),
+      precipitation: getVariable(3, responses).toFixed(0)
+    }
+  } catch(e) {
+    console.error(e);
+    return {
+      WeatherIcon: forecastIcons(-1),
+      maxTemp: '--',
+      minTemp: '--',
+      precipitation: '--'
+    }
   }
 }

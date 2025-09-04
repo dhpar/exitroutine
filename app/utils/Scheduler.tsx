@@ -1,4 +1,4 @@
-import { Temporal, toTemporalInstant, Intl } from '@js-temporal/polyfill';
+import { Temporal, Intl } from '@js-temporal/polyfill';
 
 const getToday = Temporal.Now.plainDateTimeISO();
 const getTime = Temporal.Now.plainTimeISO();
@@ -75,6 +75,18 @@ const getDatesObj = (date: Temporal.PlainDateTime) => ({
     mm: getNextSchoolDay(date).toLocaleString("en-US", { month: '2-digit' }),
     yyyy: getNextSchoolDay(date).toLocaleString("en-US", { year: 'numeric' })
 });
+
+// const isDateSoonner = (date: Temporal.PlainDate, comparison: Temporal.PlainDate) => {
+//     const isDateLessThan = Temporal.PlainDate.compare(date, comparison) === -1;
+//     return isDateLessThan;
+// }
+
+// const isDateLatterThanOrEqual =(date: Temporal.PlainDate, comparison: Temporal.PlainDate) => {
+//     const isDateSameThan = Temporal.PlainDate.compare(date, comparison) === 0;
+//     const isDateLatterThan = Temporal.PlainDate.compare(date, comparison) === 1;
+
+//     return isDateSameThan && isDateLatterThan;
+// }
 
 export { 
     getToday, 

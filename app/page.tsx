@@ -1,7 +1,6 @@
 import { Suspense } from "react";
-import { getDatesObj, toWeekDayName, getToday } from "./utils/Scheduler";
+import { getDatesObj, getToday } from "./utils/Scheduler";
 import { Forecast } from "./components/Forecast/Forecast";
-import { BackpackItems } from "./components/BackpackItems/BackpackItems";
 import { SchoolMenu } from "./components/SchoolMenu/SchoolMenu";
 import { CardLoading } from "./components/Card/CardLoading";
 import Agenda from "./components/Agenda/Agenda";
@@ -36,9 +35,6 @@ export default async function Home() {
           <Suspense fallback={<CardLoading />}>
               <SchoolMenu menu={menu}/>
           </Suspense>
-        </li>
-        <li className="col-span-1">
-          <BackpackItems />
         </li>
       </ul> 
     </main>
