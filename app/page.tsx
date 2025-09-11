@@ -14,7 +14,7 @@ export default async function Home() {
     fetchMenu(yyyy, mm, dd),
     fetchCalendar()
   ]);
-
+  
   return (
     <main className="grid grid-rows-[auto_1fr_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] ">
       <ul className="grid gap-4 min-w-0 grid-cols-2 max-w-full">

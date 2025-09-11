@@ -4,7 +4,6 @@ import { pad } from '@/utils/utils';
 import { Temporal } from '@js-temporal/polyfill';
 import { WeatherApiResponse } from '@openmeteo/sdk/weather-api-response';
 import ical from 'ical';
-import { convertSegmentPathToStaticExportFilename } from 'next/dist/shared/lib/segment-cache/segment-value-encoding';
 import { fetchWeatherApi } from 'openmeteo';
 import { JSX } from 'react';
 
@@ -37,7 +36,7 @@ export async function fetchMenu (yyyy: string, mm: string, dd: string):Promise<I
 
 export async function fetchCalendar() {
   return await fetch(
-    'https://valleyview.edinaschools.org/cf_calendar/feed.cfm?type=ical&feedID=480A95723BF64AF6A939E3131C04210A', {
+    'https://valleyview.edinaschools.org/cf_calendar/feed.cfm?type=ical&feedID=480A95723BF64AF6A939E3131C04210A&isgmt=1', {
         method: 'GET',
         headers: {
             'Content-Type': 'text/calendar',
@@ -74,8 +73,7 @@ const getVariable = (index: number, resp:WeatherApiResponse[]) => resp[0].daily(
 
 // For endDate needs a date with the following format: yyyy-mm-dd, with leading zeros (2025-02-02)
 export const fetchWeather = async ({lat, lon}: IPosition, endDate: string): Promise<IWeatherResponse> => {
-  try{
-    const responses = await fetchWeatherApi(
+    return await fetchWeatherApi(
       "https://api.open-meteo.com/v1/forecast", 
       {
           "latitude": lat,
@@ -90,23 +88,20 @@ export const fetchWeather = async ({lat, lon}: IPosition, endDate: string): Prom
           "start_date": Temporal.PlainDate.from(endDate),
           "end_date": Temporal.PlainDate.from(endDate).add({days: 1}),   
       }, 
-    );
-    
-    
-    
-    return {
-      WeatherIcon: forecastIcons(getVariable(0, responses)),
-      maxTemp: getVariable(1, responses).toFixed(0),
-      minTemp: getVariable(2, responses).toFixed(0),
-      precipitation: getVariable(3, responses).toFixed(0)
-    }
-  } catch(e) {
-    console.error(e);
-    return {
-      WeatherIcon: forecastIcons(-1),
-      maxTemp: '--',
-      minTemp: '--',
-      precipitation: '--'
-    }
-  }
+    ).then(resp => {
+      return {
+        WeatherIcon: forecastIcons(getVariable(0, resp)),
+        maxTemp: getVariable(1, resp).toFixed(0),
+        minTemp: getVariable(2, resp).toFixed(0),
+        precipitation: getVariable(3, resp).toFixed(0)
+      }
+    }).catch(e => { 
+      console.error(e);
+      return {
+        WeatherIcon: forecastIcons(-1),
+        maxTemp: '--',
+        minTemp: '--',
+        precipitation: '--'
+      }
+  });
 }

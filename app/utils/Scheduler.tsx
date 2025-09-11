@@ -1,3 +1,4 @@
+import { TSectionPlacements } from '@/components/Agenda/day';
 import { Temporal, Intl } from '@js-temporal/polyfill';
 
 const getToday = Temporal.Now.plainDateTimeISO();
@@ -76,17 +77,23 @@ const getDatesObj = (date: Temporal.PlainDateTime) => ({
     yyyy: getNextSchoolDay(date).toLocaleString("en-US", { year: 'numeric' })
 });
 
-// const isDateSoonner = (date: Temporal.PlainDate, comparison: Temporal.PlainDate) => {
-//     const isDateLessThan = Temporal.PlainDate.compare(date, comparison) === -1;
-//     return isDateLessThan;
-// }
-
-// const isDateLatterThanOrEqual =(date: Temporal.PlainDate, comparison: Temporal.PlainDate) => {
-//     const isDateSameThan = Temporal.PlainDate.compare(date, comparison) === 0;
-//     const isDateLatterThan = Temporal.PlainDate.compare(date, comparison) === 1;
-
-//     return isDateSameThan && isDateLatterThan;
-// }
+/**
+ * sortInstantStrings will sort an array of strings (each of which is
+ * parseable as a Temporal.Instant and may or may not include an IANA time
+ * zone name) by the corresponding exact time (e.g., for presenting global
+ * log events sequentially).
+ *
+ * @param {string[]} strings - an array of ISO strings
+ * @param {boolean} [reverse=false] - ascending or descending order
+ * @returns {string[]} the array from strings, sorted
+ */
+const sortInstantStrings = (a: TSectionPlacements, b: TSectionPlacements): number => {
+    if (!a.startTime || !b.startTime) return 0;
+    const timeA = Temporal.PlainTime.from(a.startTime);
+    const timeB = Temporal.PlainTime.from(b.startTime);
+    
+    return Temporal.PlainTime.compare(timeA, timeB);
+}
 
 export { 
     getToday, 
@@ -97,5 +104,6 @@ export {
     getPrevDay, 
     toWeekDayName, 
     getDatesObj, 
-    fromDateToTemporal 
+    fromDateToTemporal,
+    sortInstantStrings
 };

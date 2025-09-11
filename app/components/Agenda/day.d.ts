@@ -1,36 +1,22 @@
-declare module "aday.json" {
-  const aday: Array<TDaySchema>;
-  export default aday;
+declare module 'aday.json' {
+  const day: TDaySchema[];
+  export default day;
 }
 
-declare module "bday.json" {
-  const bday: Array<TDaySchema>;
-  export default bday;
-}
-
-export type TDaySchema = {
+export type TTerm = {
     _id: string,
-    rosterID: number,
-    personID: number,
+    termID: number,
+    termScheduleID: number,
+    seq: number,
+    startDate: string,
+    endDate: string,
+    stateCode: string,
+    termName: string,
     structureID: number,
+    isPrimary: boolean,
+    termScheduleName: string,
     calendarID: number,
-    schoolID: number,
-    courseID: number,
-    sectionID: number,
-    courseName: string,
-    courseNumber: string,
-    isResponsive: boolean,
-    sectionNumber: string,
-    endYear: number,
-    schoolName: string,
-    trialID: number,
-    trialActive: boolean,
-    roomName: string,
-    teacherDisplay: string,
-    hideStandardsOnPortal: boolean,
-    crossSiteSection: boolean,
-    crossSiteStudent: boolean,
-    sectionPlacements: TSectionPlacements[],
+    scheduleStructureName: string,
     _model: string,
     _hashCode: string
 };
@@ -39,13 +25,15 @@ export type TSectionPlacements = {
     _id: string,
     sectionID: number,
     termID: number,
-    termName: string,
+    termName?: string,
     termSeq: number,
     periodID: number,
     trialID: number,
     periodSequence: number,
     term: TTerm,
     periodScheduleID: number,
+    startTime?: string,
+    endTime?: string,
     periodName: string,
     periodScheduleName: string,
     teacherDisplay: string,
@@ -62,24 +50,37 @@ export type TSectionPlacements = {
     unitAttendance: boolean,
     attendance: boolean,
     isResponsive: boolean,
+    instructionalDay?: boolean | undefined,
+    isVirtualDay?: boolean | undefined,
     _model: string,
-    _hashCode: string
+    _hashCode: string,
 };
 
-export type TTerm = {
+export type TDaySchema = {
     _id: string,
-    termID: number,
-    termScheduleID: number,
-    seq: number,
-    startDate: string,
-    endDate: string,
-    stateCode: string,
-    termName: string,
+    rosterID: number,
+    personID: number,
     structureID: number,
-    isPrimary: boolean,
-    termScheduleName: string,
     calendarID: number,
-    scheduleStructureName: string,
+    schoolID: number,
+    courseID: number,
+    sectionID: number,
+    courseName: string,
+    courseNumber: string,
+    startTime: string,
+    endTime: string ,
+    isResponsive: boolean,
+    sectionNumber: string,
+    endYear: number,
+    schoolName: string,
+    startDate: string,
+    trialID: number,
+    trialActive: boolean,
+    teacherDisplay: string,
+    hideStandardsOnPortal: boolean,
+    crossSiteSection: boolean,
+    crossSiteStudent: boolean,
+    sectionPlacements: TSectionPlacements[],
     _model: string,
     _hashCode: string
 };
