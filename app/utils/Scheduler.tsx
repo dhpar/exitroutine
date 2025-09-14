@@ -1,4 +1,5 @@
 import { TSectionPlacements } from '@/components/Agenda/day';
+import { IScheduleItem } from '@/components/Agenda/Subject';
 import { Temporal, Intl } from '@js-temporal/polyfill';
 
 const getToday = Temporal.Now.plainDateTimeISO();
@@ -87,7 +88,7 @@ const getDatesObj = (date: Temporal.PlainDateTime) => ({
  * @param {boolean} [reverse=false] - ascending or descending order
  * @returns {string[]} the array from strings, sorted
  */
-const sortInstantStrings = (a: TSectionPlacements, b: TSectionPlacements): number => {
+const sortInstantStrings = (a: IScheduleItem, b: IScheduleItem): number => {
     if (!a.startTime || !b.startTime) return 0;
     const timeA = Temporal.PlainTime.from(a.startTime);
     const timeB = Temporal.PlainTime.from(b.startTime);
