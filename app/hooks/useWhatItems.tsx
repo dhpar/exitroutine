@@ -1,5 +1,3 @@
-import { Monda } from "next/font/google";
-
 export const useWhatItems = (dayOfWeek:string) => {
     const items:Record<string, Array<string>> = {
         Monday: [

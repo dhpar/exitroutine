@@ -1,1 +1,0 @@
-const fetchEndpoints = async (query, payload) => {}

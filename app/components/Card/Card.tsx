@@ -1,4 +1,4 @@
-import { HTMLAttributes, PropsWithChildren, ReactNode } from "react";
+import { HTMLAttributes, PropsWithChildren } from "react";
 
 export const Day = {
     a: "A Day",
@@ -15,7 +15,7 @@ interface CardProps extends PropsWithChildren<HTMLAttributes<HTMLDivElement>>{
 }
 
 export const Card = ({ title, unit, cardText, dayType, ...props }: CardProps) => {
-  const dayLetter = !!cardText && cardText === Day.a? 'A' : 'B';
+  // const dayLetter = cardText === Day.a? 'A' : 'B';
   
   return <div 
     className='min-h-60 bg-slate-600 p-4 rounded-lg shadow-md shadow-slate-600/60 h-full flex flex-col justify-items-start gap-8' 

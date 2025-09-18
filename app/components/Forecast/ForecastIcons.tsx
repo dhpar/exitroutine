@@ -1,24 +1,20 @@
-import { FunctionComponent, JSX } from "react";
-// import { error } from "console";
+import { JSX } from "react";
 import CloudDrizzle from "@assets/icons/cloud-drizzle.svg";
 import CloudLightning from "@assets/icons/cloud-lightning.svg";
 import CloudRain from "@assets/icons/cloud-rain.svg";
 import CloudSnow from "@assets/icons/cloud-snow.svg";
 import Cloud from "@assets/icons/cloud.svg";
 import Sun from "@assets/icons/sun.svg";
-import Umbrella from "@assets/icons/umbrella.svg";
-import Wind from "@assets/icons/wind.svg";
 import AlertCircle from "@assets/icons/alert-circle.svg"
 
 interface IWeatherCodeItem {
     code: number;
     label: string;
     color: string;
-    Icon?: FunctionComponent<React.SVGProps<SVGSVGElement>>;
+    Icon?: JSX.Element;
 }
 
-export const forecastIcons = (code: number) => {
-    
+export const forecastIcons = (code: number):IWeatherCodeItem => {
     const iconProps = {
         className: `h-5 w-5 inline-block`,
         "aria-hidden": true,

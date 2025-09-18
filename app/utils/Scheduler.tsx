@@ -1,5 +1,7 @@
 import { TSectionPlacements } from '@/components/Agenda/day';
 import { IScheduleItem } from '@/components/Agenda/Subject';
+import { TDay } from '@/components/Card/Card';
+import { useDates } from '@/providers';
 import { ICurrentTimeState, IDateState } from '@/reducers.types';
 import { Temporal, Intl } from '@js-temporal/polyfill';
 

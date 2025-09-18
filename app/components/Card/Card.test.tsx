@@ -1,5 +1,5 @@
 import { Card } from './Card';
-import { act, render } from "@testing-library/react";
+import { render } from "@testing-library/react";
 
 describe('In the component "Card"', () => {
     test('we can have children', () => {

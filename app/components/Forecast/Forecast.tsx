@@ -8,9 +8,8 @@ import { useDates } from "@/providers";
 import { ApiError } from "next/dist/server/api-utils";
 import { CardError } from "../Card/CardError";
 
-export const Forecast:FunctionComponent<{}> = () => {
-    const { state: { date, dd,mm, yyyy} } = useDates();
-
+export const Forecast:FunctionComponent = () => {
+    const { state: { date, dd, mm, yyyy} } = useDates();
     const position = useLocation();
     const [ forecast, setForecast ] = useState<IWeatherResponse | null>(null);
     const [ isLoading, setLoading ] = useState(true);
