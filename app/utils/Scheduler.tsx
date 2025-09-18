@@ -1,10 +1,21 @@
-import { Temporal, toTemporalInstant, Intl } from '@js-temporal/polyfill';
+import { TSectionPlacements } from '@/components/Agenda/day';
+import { IScheduleItem } from '@/components/Agenda/Subject';
+import { ICurrentTimeState, IDateState } from '@/reducers.types';
+import { Temporal, Intl } from '@js-temporal/polyfill';
 
 const getToday = Temporal.Now.plainDateTimeISO();
-const getTime = Temporal.Now.plainTimeISO();
+
+const getCurrentTime = ():ICurrentTimeState => {
+    return {
+        hour: Temporal.Now.plainTimeISO().hour,
+        minute:  Temporal.Now.plainTimeISO().minute,
+        second:  Temporal.Now.plainTimeISO().second,
+        time:  Temporal.Now.plainTimeISO()
+    }
+};
+
 const getDate = () => {
     const { day, month, year, hour, minute, dayOfWeek } = getToday;
-    
     return {
         day, 
         month, 
@@ -69,21 +80,84 @@ const fromDateToTemporal = (
     return Temporal.PlainDateTime.from(`${dateAndTime}${offset}[America/Chicago]`);
 }
 
-const getDatesObj = (date: Temporal.PlainDateTime) => ({
+const getDatesObj = (date: Temporal.PlainDateTime):IDateState => ({
     date: getNextSchoolDay(date),
     dd:  getNextSchoolDay(date).toLocaleString("en-US", { day: '2-digit' }),
     mm: getNextSchoolDay(date).toLocaleString("en-US", { month: '2-digit' }),
     yyyy: getNextSchoolDay(date).toLocaleString("en-US", { year: 'numeric' })
 });
 
+/**
+ * sortInstantStrings will sort an array of strings (each of which is
+ * parseable as a Temporal.Instant and may or may not include an IANA time
+ * zone name) by the corresponding exact time (e.g., for presenting global
+ * log events sequentially).
+ *
+ * @param {string[]} strings - an array of ISO strings
+ * @param {boolean} [reverse=false] - ascending or descending order
+ * @returns {string[]} the array from strings, sorted
+ */
+const sortInstantStrings = (a: IScheduleItem, b: IScheduleItem): number => {
+    if (!a.startTime || !b.startTime) return 0;
+    const timeA = Temporal.PlainTime.from(a.startTime);
+    const timeB = Temporal.PlainTime.from(b.startTime);
+    
+    return Temporal.PlainTime.compare(timeA, timeB);
+}
+
+const isString = (time: unknown): time is string => typeof time === 'string'; 
+
+const isPlainTime = (time: unknown): time is Temporal.PlainTime => time instanceof Temporal.PlainTime;
+
+const isPlainDateTime = (time: unknown): time is Temporal.PlainDateTime => time instanceof Temporal.PlainDateTime;
+
+
+function isInTimeWindow<T extends string | Temporal.PlainDateTime | Temporal.PlainDateTimeLike | Temporal.PlainTime> (one: T, windowOne: T, windowtwo: T): boolean {
+    let isAfterStartDate = false;
+    let isBeforeEndDate = false;
+    if((isPlainDateTime(one) && isPlainDateTime(windowOne) && isPlainDateTime(windowtwo))) {
+        isAfterStartDate = Temporal.PlainDateTime.compare(one, windowOne) >= 0;
+        isBeforeEndDate = Temporal.PlainDateTime.compare(one, windowtwo) <= 0;
+    } else {
+        const timeOne = Temporal.PlainTime.from(one);
+        const timeWindowOne = Temporal.PlainTime.from(windowOne);
+        const timeWindowTwo = Temporal.PlainTime.from(windowtwo);
+                isAfterStartDate = Temporal.PlainTime.compare(timeOne, timeWindowOne) >= 0;
+        isBeforeEndDate = Temporal.PlainTime.compare(timeOne, timeWindowTwo) <= 0;
+    }
+   
+    return isAfterStartDate && isBeforeEndDate;
+}
+
+
+const isInTerm = (section:TSectionPlacements) => {
+    const { state: { date } } = useDates();
+
+    return isInTimeWindow(
+        date, 
+        Temporal.PlainDateTime.from(section.startDate), 
+        Temporal.PlainDateTime.from(section.endDate)
+    );
+} 
+
+const isTodayASection = (section:TSectionPlacements, dayType: TDay) =>  
+    dayType.toLowerCase() === section.periodScheduleName.toLowerCase();
+
 export { 
     getToday, 
-    getTime, 
+    getCurrentTime, 
     getDate, 
     getNextSchoolDay, 
     getNextDay, 
     getPrevDay, 
     toWeekDayName, 
     getDatesObj, 
-    fromDateToTemporal 
+    fromDateToTemporal,
+    sortInstantStrings,
+    isString,
+    isPlainTime,
+    isPlainDateTime,
+    isInTimeWindow,
+    isInTerm,
+    isTodayASection
 };

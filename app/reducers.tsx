@@ -2,7 +2,7 @@ import { getToday, getNextDay, getPrevDay, getDatesObj } from "./utils/Scheduler
 import { IDateState, IDateAction } from "./reducers.types";
 
 export const initialState = getDatesObj(getToday);
-export const dateReducer = (state:IDateState, action:IDateAction):IDateState => {    
+export const dateReducer = (state:IDateState, action:IDateAction) => {   
     switch (action.type) {
         case 'increment':
             return getDatesObj(getNextDay(state.date));

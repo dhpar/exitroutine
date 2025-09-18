@@ -37,8 +37,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 
 ## TODO:
-- Implement parallel fetches for the 3rd party apis, via Promise.all.
-- Implement calendar import from Valley view, via button:
-    - ICS URL: https://valleyview.edinaschools.org/calendar/calendar_368.ics
-    This will need either a library or the creation of a parser.
 - Implement a way to highlight teacher emails or messages.

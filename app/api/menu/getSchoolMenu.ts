@@ -1,8 +1,6 @@
 "use server"
-import { logHeaders, logResponse } from "@/utils/logger";
+import { logHeaders } from "@/utils/logger";
 import { IMenuResponse } from "./getSchoolMenu.types";
-import { pad } from "@/utils/pad";
-import { sortByCategory, responseToJson } from "@/utils/utils";
 
 const sortByCategory = (a:any, b:any) => a.category.localeCompare(b.category);
 const pad = (num:string) => Number(num) < 10?  num.padStart(2, '0') : num;
@@ -18,8 +16,6 @@ const responseToJson = (response:Response) => {
 
 const filterAndPrepareToRender = (response:IMenuResponse, date:string) => {
     const currentDay = response.days.find((day) => day.date === date);
-    // logResponse(currentDay?.menu_info);
-    // logResponse(currentDay?.menu_items);
     if(!currentDay) throw new Error("No menu found for this day!");
 
     const resp = currentDay.menu_items
