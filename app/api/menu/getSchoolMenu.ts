@@ -1,5 +1,6 @@
 "use server"
 import { logHeaders } from "@/utils/logger";
+import { logHeaders } from "@/utils/logger";
 import { IMenuResponse } from "./getSchoolMenu.types";
 import { sortByCategory } from "@/utils/utils";
 
