@@ -6,15 +6,14 @@ import CloudSnow from "@assets/icons/cloud-snow.svg";
 import Cloud from "@assets/icons/cloud.svg";
 import Sun from "@assets/icons/sun.svg";
 import AlertCircle from "@assets/icons/alert-circle.svg"
-
-interface IWeatherCodeItem {
-    code: number;
-    label: string;
-    color: string;
-    Icon?: JSX.Element;
+export interface IWeatherIcon {
+  code: number;
+  label: string;
+  color: string;
+  Icon: JSX.Element;
 }
 
-export const forecastIcons = (code: number):IWeatherCodeItem => {
+export const forecastIcons = (code: number):IWeatherIcon => {
     const iconProps = {
         className: `h-5 w-5 inline-block`,
         "aria-hidden": true,
