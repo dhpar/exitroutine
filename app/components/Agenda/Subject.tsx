@@ -1,4 +1,4 @@
-import { isInTerm, isInTimeWindow, isPlainTime, isTodayASection, sortInstantStrings } from "@/utils/Scheduler";
+import { isInTimeWindow, isPlainTime, isTodayASection, sortInstantStrings } from "@/utils/Scheduler";
 import { Temporal } from "@js-temporal/polyfill";
 import { FunctionComponent, useState, useEffect } from "react";
 import { TDay } from "../Card/Card";
@@ -56,7 +56,11 @@ export const Subjects:FunctionComponent<{dayType:TDay}> = ({dayType}) => {
                     Temporal.PlainTime.from(section.endTime) : null;
                 
                 if(
-                    isInTerm(section) && 
+                    isInTimeWindow(
+                        date, 
+                        Temporal.PlainDateTime.from(section.startDate), 
+                        Temporal.PlainDateTime.from(section.endDate)
+                    ) && 
                     isTodayASection(section, dayType) &&
                     startTime && 
                     endTime

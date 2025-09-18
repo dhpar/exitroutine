@@ -1,5 +1,4 @@
 import { Temporal } from "@js-temporal/polyfill";
-import { GET } from "./api/forecast/route";
 
 export const dataReducerStateActions = {
     INCREMENT: 'increment',
