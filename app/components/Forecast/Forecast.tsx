@@ -10,22 +10,22 @@ import { CardError } from "../Card/CardError";
 
 export const Forecast:FunctionComponent = () => {
     const { state: { date, dd, mm, yyyy} } = useDates();
-    const position = useLocation();
+    const  {lat, lon} = useLocation();
     const [ forecast, setForecast ] = useState<IWeatherResponse | null>(null);
     const [ isLoading, setLoading ] = useState(true);
     const [ error, setError ] = useState<ApiError>();
     const hasPosition = 
-        !!position.lat && !!position.lon && 
-        typeof position.lat === 'number' && typeof position.lon === 'number' &&
-        position.lat !== 0 && position.lon !== 0;
+        !!lat && !!lon && 
+        typeof lat === 'number' && typeof lon === 'number' &&
+        lat !== 0 && lon !== 0;
 
     useEffect(() => {
         if(!hasPosition){
             return;
         }
         getWeather({
-            lat: position.lat, 
-            lon: position.lon
+            lat: lat, 
+            lon: lon
         }, `${yyyy}-${mm}-${dd}`)
             .then(resp => {
                 setLoading(true);
@@ -33,7 +33,7 @@ export const Forecast:FunctionComponent = () => {
             })
             .catch(setError)
             .finally(() => setLoading(false));
-    }, [hasPosition, date]);
+    }, [hasPosition, date, lat, lon, yyyy, mm, dd]);
     
     if(isLoading)  return <CardLoading />
     if(error?.statusCode && error?.statusCode !== 200) return <CardError {...error} />
