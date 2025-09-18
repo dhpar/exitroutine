@@ -1,5 +1,5 @@
 import { IMenuResponse } from '@/api/menu/getSchoolMenu.types';
-import { forecastIcons } from '@/components/Forecast/ForecastIcons';
+import { forecastIcons, IWeatherIcon } from '@/components/Forecast/ForecastIcons';
 import { pad } from '@/utils/utils';
 import { Temporal } from '@js-temporal/polyfill';
 import { WeatherApiResponse } from '@openmeteo/sdk/weather-api-response';
@@ -12,13 +12,6 @@ const SCHOOL = 'valley-view';
 interface IPosition {
   lat: number;
   lon: number;
-}
-
-interface IWeatherIcon {
-  code: number;
-  label: string;
-  color: string;
-  Icon: JSX.Element;
 }
 
 export interface IWeatherResponse {
@@ -72,7 +65,7 @@ export async function fetchSchoologyCalendar(yyyy: string, mm: string, dd: strin
 const getVariable = (index: number, resp:WeatherApiResponse[]) => resp[0].daily()!.variables(index)!.valuesArray()![0];
 
 // For endDate needs a date with the following format: yyyy-mm-dd, with leading zeros (2025-02-02)
-export const fetchWeather = async ({lat, lon}: IPosition, endDate: string): Promise<IWeatherResponse> => {
+export const fetchWeather = async ({lat, lon}: IPosition, endDate: string): Promise<IWeatherResponse |undefined>  => {
     return await fetchWeatherApi(
       "https://api.open-meteo.com/v1/forecast", 
       {
@@ -90,7 +83,7 @@ export const fetchWeather = async ({lat, lon}: IPosition, endDate: string): Prom
       }, 
     ).then(resp => {
       return {
-        WeatherIcon: forecastIcons(getVariable(0, resp)),
+        WeatherIcon: forecastIcons(getVariable(0, resp)) || forecastIcons(-1),
         maxTemp: getVariable(1, resp).toFixed(0),
         minTemp: getVariable(2, resp).toFixed(0),
         precipitation: getVariable(3, resp).toFixed(0)
