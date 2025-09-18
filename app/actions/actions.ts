@@ -5,7 +5,6 @@ import { Temporal } from '@js-temporal/polyfill';
 import { WeatherApiResponse } from '@openmeteo/sdk/weather-api-response';
 import ical from 'ical';
 import { fetchWeatherApi } from 'openmeteo';
-import { JSX } from 'react';
 
 const SCHOOL = 'valley-view';  
 
