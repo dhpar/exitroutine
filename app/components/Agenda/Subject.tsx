@@ -4,6 +4,7 @@ import { FunctionComponent, useState, useEffect } from "react";
 import { TDay } from "../Card/Card";
 import data from './aday.json';
 import { TDaySchema } from '@/components/Agenda/day';
+import { useDates } from "@/providers";
 
 export interface IScheduleItem {
     startTime: Temporal.PlainTime | string,
@@ -32,7 +33,7 @@ const FIXED_SCHEDULE: IScheduleItem[] = [
 export const Subjects:FunctionComponent<{dayType:TDay}> = ({dayType}) => {
     const getCurrentTime = () => Temporal.Now;
     const [ currentTime, setCurrentTime ] = useState(getCurrentTime); 
-    
+    const { state: { date }} = useDates();
     const listItemtyles = {
         primary: 'p-2',
         current: 'text-xl border-solid border-blue-200 border-2 m-2 bg-slate-300 text-blue-700'

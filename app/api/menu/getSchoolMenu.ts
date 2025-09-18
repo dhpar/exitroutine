@@ -1,13 +1,9 @@
 "use server"
-import { logHeaders } from "@/utils/logger";
-import { logHeaders } from "@/utils/logger";
 import { IMenuResponse } from "./getSchoolMenu.types";
 import { sortByCategory } from "@/utils/utils";
 
 const pad = (num:string) => Number(num) < 10?  num.padStart(2, '0') : num;
 const responseToJson = (response:Response) => {
-    logHeaders(response);
-
     if (!response.ok) {
         throw new Error(`HTTP error, status = ${response.status}`);
     }
