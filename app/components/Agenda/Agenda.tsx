@@ -41,10 +41,8 @@ const Agenda: FunctionComponent<IAgenda> = ({ calendar }) => {
 
     return (
         <Card title='Agenda' dayType={dayType}>
-            
             {dayFromCalendar?.description && 
-                <p>{dayFromCalendar?.description}</p>
-            }
+                <p>{dayFromCalendar?.description}</p>}
             <ul>
                 <Subjects dayType={dayType}/>
             </ul>

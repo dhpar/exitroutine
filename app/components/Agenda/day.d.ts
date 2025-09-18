@@ -1,4 +1,4 @@
-declare module 'aday.json' {
+declare module '*.json' {
   const day: TDaySchema[];
   export default day;
 }
@@ -32,8 +32,8 @@ export type TSectionPlacements = {
     periodSequence: number,
     term: TTerm,
     periodScheduleID: number,
-    startTime?: string,
-    endTime?: string,
+    startTime?: string | null,
+    endTime?: string | null,
     periodName: string,
     periodScheduleName: string,
     teacherDisplay: string,
@@ -67,8 +67,8 @@ export type TDaySchema = {
     sectionID: number,
     courseName: string,
     courseNumber: string,
-    startTime: string,
-    endTime: string ,
+    startTime?: string | null,
+    endTime?: string | null,
     isResponsive: boolean,
     sectionNumber: string,
     endYear: number,

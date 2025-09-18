@@ -1,5 +1,5 @@
 "use client"
-import { FunctionComponent, use, useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { Card } from "../Card/Card";
 import { useLocation } from "@/hooks/useLocation";
 import { CardLoading } from "../Card/CardLoading";
