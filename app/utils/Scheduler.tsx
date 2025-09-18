@@ -131,17 +131,6 @@ function isInTimeWindow<T extends string | Temporal.PlainDateTime | Temporal.Pla
     return isAfterStartDate && isBeforeEndDate;
 }
 
-
-const isInTerm = (section:TSectionPlacements) => {
-    const { state: { date } } = useDates();
-
-    return isInTimeWindow(
-        date, 
-        Temporal.PlainDateTime.from(section.startDate), 
-        Temporal.PlainDateTime.from(section.endDate)
-    );
-} 
-
 const isTodayASection = (section:TSectionPlacements, dayType: TDay) =>  
     dayType.toLowerCase() === section.periodScheduleName.toLowerCase();
 
@@ -160,6 +149,5 @@ export {
     isPlainTime,
     isPlainDateTime,
     isInTimeWindow,
-    isInTerm,
     isTodayASection
 };
