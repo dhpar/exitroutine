@@ -2,12 +2,10 @@
 import { useDates } from "@/providers";
 import { initialState } from "@/reducers";
 import { toWeekDayName } from "@/utils/Scheduler";
-import ChevronLeft from '@assets/icons/chevron-left.svg';
-import ChevronRight from '@assets/icons/chevron-right.svg';
 import { FunctionComponent } from "react";
 
-export const DateHero:FunctionComponent<{}> = () => {
-    const { state: {dd, mm, yyyy, date}, dispatch } = useDates();
+export const DateHero:FunctionComponent = () => {
+    const { state: {date}, dispatch } = useDates();
     const decreaseDate = () => dispatch({type: 'decrement'});
     const increaseDate = () => dispatch({type: 'increment'});
     const getToday = () => dispatch({type: 'getToday'});

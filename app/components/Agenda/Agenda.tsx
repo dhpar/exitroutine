@@ -27,10 +27,10 @@ const findDay = (calendar: CalendarComponent[], day: Temporal.PlainDateTime) => 
 }
 
 const Agenda: FunctionComponent<IAgenda> = ({ calendar }) => {
+    const { state: { date } } = useDates();
     if(!calendar) {
         return <CardLoading />;
     }
-    const { state: { date } } = useDates();
 
     const onlyABDays = calendar.filter(day => {   
         if(!day.summary && !isADay(dayType) && !isBDay(dayType)) return null; 

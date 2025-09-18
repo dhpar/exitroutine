@@ -1,8 +1,8 @@
 "use server"
 import { logHeaders } from "@/utils/logger";
 import { IMenuResponse } from "./getSchoolMenu.types";
+import { sortByCategory } from "@/utils/utils";
 
-const sortByCategory = (a:any, b:any) => a.category.localeCompare(b.category);
 const pad = (num:string) => Number(num) < 10?  num.padStart(2, '0') : num;
 const responseToJson = (response:Response) => {
     logHeaders(response);
@@ -23,7 +23,6 @@ const filterAndPrepareToRender = (response:IMenuResponse, date:string) => {
             // Filter by category, food that B is not interested in.
             const foodCategoriesToExclude = ['condiment', 'beverage'];
             if(item.food && !foodCategoriesToExclude.includes(item.category)) {
-                // logResponse(item)
                 return {
                     food: item.food.name, 
                     category: item.food.food_category 

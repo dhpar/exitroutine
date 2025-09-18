@@ -1,5 +1,5 @@
 import { Forecast } from './Forecast';
-import { act, render, screen } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 
 describe('Renders the component Forecast', () => {
     test('...with a unordered list', async () => {

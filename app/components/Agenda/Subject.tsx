@@ -1,6 +1,6 @@
 import { isInTerm, isInTimeWindow, isPlainTime, isTodayASection, sortInstantStrings } from "@/utils/Scheduler";
 import { Temporal } from "@js-temporal/polyfill";
-import { FunctionComponent, useState, useEffect, Fragment } from "react";
+import { FunctionComponent, useState, useEffect } from "react";
 import { TDay } from "../Card/Card";
 import data from './aday.json';
 import { TDaySchema } from '@/components/Agenda/day';

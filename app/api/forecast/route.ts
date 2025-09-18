@@ -1,4 +1,3 @@
-import { forecastIcons } from '@/components/Forecast/ForecastIcons';
 import { getToday } from '@/utils/Scheduler';
 import { Temporal } from '@js-temporal/polyfill';
 import { NextRequest } from 'next/server';
