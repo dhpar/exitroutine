@@ -57,11 +57,7 @@ export const Subjects:FunctionComponent<{dayType:TDay}> = ({dayType}) => {
                     Temporal.PlainTime.from(section.endTime) : null;
                 
                 if(
-                    isInTimeWindow(
-                        date, 
-                        Temporal.PlainDateTime.from(section.startDate), 
-                        Temporal.PlainDateTime.from(section.endDate)
-                    ) && 
+                    isInTimeWindow(date, Temporal.PlainDateTime.from(section.startDate), Temporal.PlainDateTime.from(section.endDate)) && 
                     isTodayASection(section, dayType) &&
                     startTime && 
                     endTime
