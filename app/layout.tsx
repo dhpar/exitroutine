@@ -24,7 +24,6 @@ type RootLayoutProps = {
 };
 
 export default function RootLayout({children}: Readonly<RootLayoutProps>) {
-  
   return (
     // Provide the client to your App
     <html lang="en">

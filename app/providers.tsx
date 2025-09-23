@@ -4,6 +4,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { dateReducer, initialState } from './reducers';
 import { IDateState, IDateAction } from "./reducers.types";
+import { SessionProvider } from 'next-auth/react';
 
 export const DatesStateContext = createContext<{
   state: IDateState;
@@ -28,9 +29,11 @@ export default function Providers({ children }: PropsWithChildren):ReactNode | P
   const [ state, dispatch ] = useReducer(dateReducer, initialState);
 
   return <QueryClientProvider client={queryClient}>
-    <DatesStateContext value={{state, dispatch}}>
-      {children}
-      <ReactQueryDevtools />
-    </DatesStateContext>
+    <SessionProvider>
+      <DatesStateContext value={{state, dispatch}}>
+        {children}
+        <ReactQueryDevtools />
+      </DatesStateContext>
+    </SessionProvider>
   </QueryClientProvider>
 };

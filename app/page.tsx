@@ -6,6 +6,7 @@ import { CardLoading } from "./components/Card/CardLoading";
 import Agenda from "./components/Agenda/Agenda";
 import { fetchMenu, fetchCalendar } from "./actions/actions";
 import { DateHero } from "./components/DateHero/DateHero";
+import SignIn from "./components/Auth/SignIn";
 
 export default async function Home() {
   const { dd, mm, yyyy } = getDatesObj(getToday);
@@ -17,6 +18,7 @@ export default async function Home() {
   
   return (
     <main className="grid grid-rows-[auto_1fr_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] ">
+      <p className="flex justify-end w-full"><SignIn /></p>
       <ul className="grid gap-4 min-w-0 grid-cols-2 max-w-full">
         <li className="col-span-2">
           <DateHero />

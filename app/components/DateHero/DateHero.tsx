@@ -13,7 +13,6 @@ export const DateHero:FunctionComponent = () => {
 
     return <div className="flex w-full justify-between items-stretch">
         <button onClick={decreaseDate} className={`py-2 px-4 mr-4   text-slate-50 rounded-lg ${!isCurrentDateToday && "border-slate-50 border-solid border-2 hover:bg-slate-50 hover:text-slate-900"}`} disabled={isCurrentDateToday}>
-          {/* <ChevronLeft /> */}
             {'<'}
         </button>
         <div className="flex flex-col items-center">
