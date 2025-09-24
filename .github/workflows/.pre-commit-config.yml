@@ -1,6 +1,7 @@
 name: pre-commit
 
 on:
+  commit: npm run build
   pull_request:
   push:
     branches: [main]
