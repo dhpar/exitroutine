@@ -15,7 +15,6 @@ const OPTIONS = {
     }), 
   ],
   pages: {}
-  
   // Add other NextAuth.js options like callbacks, session, etc.
 };
 
