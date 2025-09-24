@@ -17,6 +17,6 @@ export const OPTIONS = {
   // Add other NextAuth.js options like callbacks, session, etc.
 };
 
-export const handler = NextAuth(OPTIONS);
+export default NextAuth(OPTIONS);
 
-export { handler as GET, handler as POST };
+// export { handler as GET, handler as POST };
