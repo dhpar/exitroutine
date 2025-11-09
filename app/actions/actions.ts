@@ -65,35 +65,35 @@ const getVariable = (index: number, resp:WeatherApiResponse[]) => resp[0].daily(
 
 // For endDate needs a date with the following format: yyyy-mm-dd, with leading zeros (2025-02-02)
 export const fetchWeather = async ({lat, lon}: IPosition, endDate: string): Promise<IWeatherResponse |undefined>  => {
-  return await fetchWeatherApi(
-    "https://api.open-meteo.com/v1/forecast", 
-    {
-      "latitude": lat,
-      "longitude": lon,
-      "temperature_unit": "fahrenheit",
-      "daily": [
-          "weather_code", 
-          "apparent_temperature_max", 
-          "apparent_temperature_min", 
-          "precipitation_probability_max"
-      ],
-      "start_date": Temporal.PlainDate.from(endDate),
-      "end_date": Temporal.PlainDate.from(endDate).add({days: 1}),   
-    }, 
-  ).then(resp => {
+    return await fetchWeatherApi(
+      "https://api.open-meteo.com/v1/forecast", 
+      {
+          "latitude": lat,
+          "longitude": lon,
+          "temperature_unit": "fahrenheit",
+          "daily": [
+              "weather_code", 
+              "apparent_temperature_max", 
+              "apparent_temperature_min", 
+              "precipitation_probability_max"
+          ],
+          "start_date": Temporal.PlainDate.from(endDate),
+          "end_date": Temporal.PlainDate.from(endDate).add({days: 1}),   
+      }, 
+    ).then(resp => {
       return {
         WeatherIcon: forecastIcons(getVariable(0, resp)) || forecastIcons(-1),
         maxTemp: getVariable(1, resp).toFixed(0),
         minTemp: getVariable(2, resp).toFixed(0),
         precipitation: getVariable(3, resp).toFixed(0)
       }
-  }).catch(e => { 
-    console.error(e);
-    return {
-      WeatherIcon: forecastIcons(-1),
-      maxTemp: '--',
-      minTemp: '--',
-      precipitation: '--'
-    }
+    }).catch(e => { 
+      console.error(e);
+      return {
+        WeatherIcon: forecastIcons(-1),
+        maxTemp: '--',
+        minTemp: '--',
+        precipitation: '--'
+      }
   });
 }

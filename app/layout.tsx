@@ -4,8 +4,6 @@ import "./globals.css";
 import Providers from "./providers";
 import { ReactNode } from "react";
 import { Analytics } from "@vercel/analytics/next";
-import { useSession } from "next-auth/react";
-import { Header } from "./components/Header/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +28,6 @@ export default function RootLayout({children}: Readonly<RootLayoutProps>) {
   return (
     // Provide the client to your App
     <html lang="en">
-      {/* <Header /> */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>{children}</Providers>

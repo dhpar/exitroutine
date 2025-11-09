@@ -7,14 +7,10 @@ import Agenda from "./components/Agenda/Agenda";
 import { fetchMenu, fetchCalendar } from "./actions/actions";
 import { DateHero } from "./components/DateHero/DateHero";
 import SignIn from "./components/Auth/SignIn";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 
 export default async function Home() {
   const { dd, mm, yyyy } = getDatesObj(getToday);
-  const session = await getServerSession(authOptions);
-
-
+  
   const [menu, schoolCalendar] = await Promise.all([
     fetchMenu(yyyy, mm, dd),
     fetchCalendar()
@@ -22,31 +18,27 @@ export default async function Home() {
   
   return (
     <main className="grid grid-rows-[auto_1fr_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] ">
-      <div className="flex justify-end w-full">
-        <SignIn />
-      </div>
-      {session?.user && (
-        <ul className="grid gap-4 min-w-0 grid-cols-2 max-w-full">
-          <li className="col-span-2">
-            <DateHero />
-          </li>
-          <li className="col-span-2">
+      <p className="flex justify-end w-full"><SignIn /></p>
+      <ul className="grid gap-4 min-w-0 grid-cols-2 max-w-full">
+        <li className="col-span-2">
+          <DateHero />
+        </li>
+        <li className="col-span-2">
+        <Suspense fallback={<CardLoading />}>
+          <Forecast />
+        </Suspense>
+        </li>
+        <li className="col-span-1">
           <Suspense fallback={<CardLoading />}>
-            <Forecast />
+            <Agenda calendar={schoolCalendar}/>
           </Suspense>
-          </li>
-          <li className="col-span-1">
-            <Suspense fallback={<CardLoading />}>
-              <Agenda calendar={schoolCalendar}/>
-            </Suspense>
-          </li>
-          <li className="col-span-1">
-            <Suspense fallback={<CardLoading />}>
-                <SchoolMenu menu={menu}/>
-            </Suspense>
-          </li>
-        </ul>
-      )}
+        </li>
+        <li className="col-span-1">
+          <Suspense fallback={<CardLoading />}>
+              <SchoolMenu menu={menu}/>
+          </Suspense>
+        </li>
+      </ul> 
     </main>
   );
 }
