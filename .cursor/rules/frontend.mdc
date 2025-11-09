@@ -1,0 +1,15 @@
+---
+description: Next component rules
+globs: *.ts, *.tsx
+alwaysApply: true
+---
+When working in the app/components directory and component files:
+
+Always use Tailwind for styling
+Always use Typescript
+Always create an Typescript Interface and apply it to the component to descrive the props that will recieve
+When the types/interface definition on the component becomes ~50 lines long pull it into it's own file following the patter [component name].types.ts 
+Always use functional components
+Always decostruct the component props so they are visible on the component function definition
+Always start component with capital letter and use camel case for component, file and folder levels
+Follow component naming conventions
