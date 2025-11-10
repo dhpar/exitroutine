@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export default function middleware(request:NextRequest, response:NextResponse) {
+export default function middleware(request:NextRequest) {
     const authToken = request.cookies.get('authToken'); // Replace 'authToken' with your actual cookie name
     debugger;
     if (!authToken) {
