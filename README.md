@@ -1,33 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Exit Routine 
+
+A daily dashboard for parents — weather forecast, kids' schedule, and homework due, all in one glance before heading out the door.
+
+> Built to solve a real problem: the morning chaos of remembering everything your kid needs for the day.
+
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
+
+## Live Demo
+
+[exitroutine.vercel.app](https://exitroutine.vercel.app)
+
+---
+
+## Features
+
+- **Weather forecast** — Today's conditions at a glance so you know what to wear or pack
+- **Kid's schedule** — Daily agenda so nothing gets missed
+- **Homework tracker** — What's due today and what's coming up
+- **Auth** — Secure, per-family data with NextAuth
+
+---
+
+## Tech Stack
+
+| Layer | Tech |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| Auth | NextAuth.js |
+| Testing | Jest |
+| Containerization | Docker |
+| CI/CD | GitHub Actions → Vercel |
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Install & Run
 
 ```bash
+git clone https://github.com/dhpar/exitroutine.git
+cd exitroutine
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Run with Docker
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+docker build -t exitroutine .
+docker run -p 3000:3000 exitroutine
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Testing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm test
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
+
+## Project Structure
+
+```
+exitroutine/
+├── app/                  # Next.js App Router pages and layouts
+├── types/                # Shared TypeScript types
+├── .github/workflows/    # CI/CD pipeline
+├── .devcontainer/        # Dev container config
+├── auth.ts               # NextAuth configuration
+├── Dockerfile
+└── jest.config.ts
+```
+
+---
+
+##  Roadmap
+
+- [ ] Highlight teacher emails and messages
+- [ ] Push notifications for upcoming homework deadlines
+- [ ] Multi-child support
+
+---
+
+## License
+
+MIT
 
 ## Deploy on Vercel
 
